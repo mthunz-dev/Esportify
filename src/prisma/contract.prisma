@@ -1,0 +1,18 @@
+// use prisma-8
+enum TransactionType {
+  INCOME
+  OUTCOME
+}
+
+model User {
+  id         String                     @id
+  accounts   UserAccount[]
+  categories Category[]
+  settingId  String                     @unique
+  settings   UserSetting                @relation("User_UserSetting", fields:[settingId], references:[id])
+
+  createdAt  TimestamptzString          @default(now())
+  updatedAt  temporal.updatedAtString()
+
+  @@map("user")
+}
