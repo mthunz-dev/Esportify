@@ -7,12 +7,10 @@ const matchSchema: Schema = {
     properties: {
         teamAScore: { type: Type.INTEGER, description: "Điểm số hoặc số round thắng của đội A" },
         teamBScore: { type: Type.INTEGER, description: "Điểm số hoặc số round thắng của đội B" },
-        teamAplayers: {
+        teamAPlayers: {
             type: Type.ARRAY,
-            items: {
-                type: Type.STRING,
-                description: "Danh sách tên trong game (ingame/IGN) của người chơi thuộc team A",
-            },
+            items: { type: Type.STRING },
+            description: "Danh sách tên trong game (ingame/IGN) của người chơi thuộc team A",
         },
         teamBPlayers: {
             type: Type.ARRAY,
@@ -41,8 +39,12 @@ export class AiService {
                     responseSchema: matchSchema,
                 },
             });
-
-            return JSON.parse(response.text!);
+            return JSON.parse(response.text!) as {
+                teamAScore: number;
+                teamBScore: number;
+                teamAPlayers: string[];
+                teamBPlayers: string[];
+            };
         } catch (error) {
             console.error("Lỗi AI Service:", error);
             return null;

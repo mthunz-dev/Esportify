@@ -4,19 +4,19 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
-    "Match": {
+    "match": {
       "model": "Match",
       "namespace": "public"
     },
-    "Player": {
+    "player": {
       "model": "Player",
       "namespace": "public"
     },
-    "Team": {
+    "team": {
       "model": "Team",
       "namespace": "public"
     },
-    "Tournament": {
+    "tournament": {
       "model": "Tournament",
       "namespace": "public"
     }
@@ -201,7 +201,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "Match"
+              "table": "match"
             }
           },
           "Player": {
@@ -289,7 +289,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "Player"
+              "table": "player"
             }
           },
           "Team": {
@@ -432,7 +432,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "Team"
+              "table": "team"
             }
           },
           "Tournament": {
@@ -550,7 +550,7 @@
                 }
               },
               "namespaceId": "public",
-              "table": "Tournament"
+              "table": "tournament"
             }
           }
         }
@@ -562,7 +562,7 @@
       "public": {
         "entries": {
           "table": {
-            "Match": {
+            "match": {
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -622,7 +622,7 @@
               "foreignKeys": [
                 {
                   "index": {
-                    "name": "Match_tournamentId_idx_d0bd97a6"
+                    "name": "match_tournamentId_idx_d0bd97a6"
                   },
                   "onDelete": "cascade",
                   "source": {
@@ -630,52 +630,52 @@
                       "tournamentId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Match"
+                    "tableName": "match"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Tournament"
+                    "tableName": "tournament"
                   }
                 },
                 {
                   "index": {
-                    "name": "Match_teamAId_idx_abcaa351"
+                    "name": "match_teamAId_idx_abcaa351"
                   },
                   "source": {
                     "columns": [
                       "teamAId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Match"
+                    "tableName": "match"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Team"
+                    "tableName": "team"
                   }
                 },
                 {
                   "index": {
-                    "name": "Match_teamBId_idx_136b4e79"
+                    "name": "match_teamBId_idx_136b4e79"
                   },
                   "source": {
                     "columns": [
                       "teamBId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Match"
+                    "tableName": "match"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Team"
+                    "tableName": "team"
                   }
                 }
               ],
@@ -684,24 +684,24 @@
                   "columns": [
                     "teamAId"
                   ],
-                  "name": "Match_teamAId_idx_abcaa351",
-                  "prefix": "Match_teamAId_idx",
+                  "name": "match_teamAId_idx_abcaa351",
+                  "prefix": "match_teamAId_idx",
                   "unique": false
                 },
                 {
                   "columns": [
                     "teamBId"
                   ],
-                  "name": "Match_teamBId_idx_136b4e79",
-                  "prefix": "Match_teamBId_idx",
+                  "name": "match_teamBId_idx_136b4e79",
+                  "prefix": "match_teamBId_idx",
                   "unique": false
                 },
                 {
                   "columns": [
                     "tournamentId"
                   ],
-                  "name": "Match_tournamentId_idx_d0bd97a6",
-                  "prefix": "Match_tournamentId_idx",
+                  "name": "match_tournamentId_idx_d0bd97a6",
+                  "prefix": "match_tournamentId_idx",
                   "unique": false
                 }
               ],
@@ -712,7 +712,7 @@
               },
               "uniques": []
             },
-            "Player": {
+            "player": {
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -752,7 +752,7 @@
               "foreignKeys": [
                 {
                   "index": {
-                    "name": "Player_teamId_idx_f2b72ab3"
+                    "name": "player_teamId_idx_f2b72ab3"
                   },
                   "onDelete": "cascade",
                   "source": {
@@ -760,24 +760,32 @@
                       "teamId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Player"
+                    "tableName": "player"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Team"
+                    "tableName": "team"
                   }
                 }
               ],
               "indexes": [
                 {
                   "columns": [
+                    "discordId"
+                  ],
+                  "name": "player_discordId_idx_ddb4c128",
+                  "prefix": "player_discordId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
                     "teamId"
                   ],
-                  "name": "Player_teamId_idx_f2b72ab3",
-                  "prefix": "Player_teamId_idx",
+                  "name": "player_teamId_idx_f2b72ab3",
+                  "prefix": "player_teamId_idx",
                   "unique": false
                 }
               ],
@@ -788,7 +796,7 @@
               },
               "uniques": []
             },
-            "Team": {
+            "team": {
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -837,7 +845,7 @@
               "foreignKeys": [
                 {
                   "index": {
-                    "name": "Team_tournamentId_idx_d0bd97a6"
+                    "name": "team_tournamentId_idx_d0bd97a6"
                   },
                   "onDelete": "cascade",
                   "source": {
@@ -845,14 +853,14 @@
                       "tournamentId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Team"
+                    "tableName": "team"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Tournament"
+                    "tableName": "tournament"
                   }
                 }
               ],
@@ -861,8 +869,8 @@
                   "columns": [
                     "tournamentId"
                   ],
-                  "name": "Team_tournamentId_idx_d0bd97a6",
-                  "prefix": "Team_tournamentId_idx",
+                  "name": "team_tournamentId_idx_d0bd97a6",
+                  "prefix": "team_tournamentId_idx",
                   "unique": false
                 }
               ],
@@ -875,18 +883,17 @@
                 {
                   "columns": [
                     "name",
-                    "tag",
                     "tournamentId"
                   ]
                 }
               ]
             },
-            "Tournament": {
+            "tournament": {
               "checks": [
                 {
                   "expression": "\"status\" IN ('ACTIVE', 'PAUSED', 'ENDED')",
-                  "name": "Tournament_status_check_ae624668",
-                  "prefix": "Tournament_status_check"
+                  "name": "tournament_status_check_ae624668",
+                  "prefix": "tournament_status_check"
                 }
               ],
               "columns": {
@@ -965,10 +972,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "90151dd03d642bf8ed2535918acbe10a4cdef51a51ac98e6648f4c67a7d6a5bf"
+    "storageHash": "4b7ec7f63f6d93fce4eeff59ac86f74c3613fe559fcda6c3772e19f9d5b67eac"
   },
   "execution": {
-    "executionHash": "7c1fb04da08ac95492a6a525b8d85929948e36e7f2928a82cfbe341bce4ceb6d",
+    "executionHash": "e31c0549a1b744538a2de70e8bbf854264e518e3872145f0212f1b45512eb8a4",
     "mutations": {
       "defaults": [
         {
@@ -977,7 +984,7 @@
             "kind": "generator"
           },
           "ref": {
-            "entry": "Match",
+            "entry": "match",
             "field": "id",
             "namespace": "public"
           }
@@ -992,7 +999,7 @@
             "kind": "generator"
           },
           "ref": {
-            "entry": "Match",
+            "entry": "match",
             "field": "updatedAt",
             "namespace": "public"
           }
@@ -1003,7 +1010,7 @@
             "kind": "generator"
           },
           "ref": {
-            "entry": "Player",
+            "entry": "player",
             "field": "id",
             "namespace": "public"
           }
@@ -1018,7 +1025,7 @@
             "kind": "generator"
           },
           "ref": {
-            "entry": "Player",
+            "entry": "player",
             "field": "updatedAt",
             "namespace": "public"
           }
@@ -1029,7 +1036,7 @@
             "kind": "generator"
           },
           "ref": {
-            "entry": "Team",
+            "entry": "team",
             "field": "id",
             "namespace": "public"
           }
@@ -1044,7 +1051,7 @@
             "kind": "generator"
           },
           "ref": {
-            "entry": "Team",
+            "entry": "team",
             "field": "updatedAt",
             "namespace": "public"
           }
@@ -1055,7 +1062,7 @@
             "kind": "generator"
           },
           "ref": {
-            "entry": "Tournament",
+            "entry": "tournament",
             "field": "id",
             "namespace": "public"
           }
@@ -1070,7 +1077,7 @@
             "kind": "generator"
           },
           "ref": {
-            "entry": "Tournament",
+            "entry": "tournament",
             "field": "updatedAt",
             "namespace": "public"
           }

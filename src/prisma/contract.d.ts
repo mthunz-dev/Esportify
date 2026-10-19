@@ -18,9 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'90151dd03d642bf8ed2535918acbe10a4cdef51a51ac98e6648f4c67a7d6a5bf'>;
+  StorageHashBase<'4b7ec7f63f6d93fce4eeff59ac86f74c3613fe559fcda6c3772e19f9d5b67eac'>;
 export type ExecutionHash =
-  ExecutionHashBase<'7c1fb04da08ac95492a6a525b8d85929948e36e7f2928a82cfbe341bce4ceb6d'>;
+  ExecutionHashBase<'e31c0549a1b744538a2de70e8bbf854264e518e3872145f0212f1b45512eb8a4'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -318,7 +318,7 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
-    readonly Match: {
+    readonly match: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly proofImage: CodecTypes['pg/text@1']['output'];
@@ -330,7 +330,7 @@ export type StorageColumnTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly winnerId: CodecTypes['pg/text@1']['output'] | null;
     };
-    readonly Player: {
+    readonly player: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly discordId: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
@@ -338,7 +338,7 @@ export type StorageColumnTypes = {
       readonly teamId: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly Team: {
+    readonly team: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -347,7 +347,7 @@ export type StorageColumnTypes = {
       readonly tournamentId: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly Tournament: {
+    readonly tournament: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly game: CodecTypes['pg/text@1']['output'];
       readonly guildId: CodecTypes['pg/text@1']['output'];
@@ -360,7 +360,7 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
-    readonly Match: {
+    readonly match: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly proofImage: CodecTypes['pg/text@1']['input'];
@@ -372,7 +372,7 @@ export type StorageColumnInputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly winnerId: CodecTypes['pg/text@1']['input'] | null;
     };
-    readonly Player: {
+    readonly player: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly discordId: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
@@ -380,7 +380,7 @@ export type StorageColumnInputTypes = {
       readonly teamId: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly Team: {
+    readonly team: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -389,7 +389,7 @@ export type StorageColumnInputTypes = {
       readonly tournamentId: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly Tournament: {
+    readonly tournament: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly game: CodecTypes['pg/text@1']['input'];
       readonly guildId: CodecTypes['pg/text@1']['input'];
@@ -483,7 +483,7 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
-            readonly Match: {
+            readonly match: {
               columns: {
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
@@ -551,20 +551,20 @@ type ContractBase = Omit<
               uniques: readonly [];
               indexes: readonly [
                 {
-                  readonly name: 'Match_teamAId_idx_abcaa351';
-                  readonly prefix: 'Match_teamAId_idx';
+                  readonly name: 'match_teamAId_idx_abcaa351';
+                  readonly prefix: 'match_teamAId_idx';
                   readonly columns: readonly ['teamAId'];
                   readonly unique: false;
                 },
                 {
-                  readonly name: 'Match_teamBId_idx_136b4e79';
-                  readonly prefix: 'Match_teamBId_idx';
+                  readonly name: 'match_teamBId_idx_136b4e79';
+                  readonly prefix: 'match_teamBId_idx';
                   readonly columns: readonly ['teamBId'];
                   readonly unique: false;
                 },
                 {
-                  readonly name: 'Match_tournamentId_idx_d0bd97a6';
-                  readonly prefix: 'Match_tournamentId_idx';
+                  readonly name: 'match_tournamentId_idx_d0bd97a6';
+                  readonly prefix: 'match_tournamentId_idx';
                   readonly columns: readonly ['tournamentId'];
                   readonly unique: false;
                 },
@@ -573,42 +573,42 @@ type ContractBase = Omit<
                 {
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Match';
+                    readonly tableName: 'match';
                     readonly columns: readonly ['tournamentId'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Tournament';
+                    readonly tableName: 'tournament';
                     readonly columns: readonly ['id'];
                   };
                 },
                 {
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Match';
+                    readonly tableName: 'match';
                     readonly columns: readonly ['teamAId'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Team';
+                    readonly tableName: 'team';
                     readonly columns: readonly ['id'];
                   };
                 },
                 {
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Match';
+                    readonly tableName: 'match';
                     readonly columns: readonly ['teamBId'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Team';
+                    readonly tableName: 'team';
                     readonly columns: readonly ['id'];
                   };
                 },
               ];
             };
-            readonly Player: {
+            readonly player: {
               columns: {
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
@@ -652,8 +652,14 @@ type ContractBase = Omit<
               uniques: readonly [];
               indexes: readonly [
                 {
-                  readonly name: 'Player_teamId_idx_f2b72ab3';
-                  readonly prefix: 'Player_teamId_idx';
+                  readonly name: 'player_discordId_idx_ddb4c128';
+                  readonly prefix: 'player_discordId_idx';
+                  readonly columns: readonly ['discordId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'player_teamId_idx_f2b72ab3';
+                  readonly prefix: 'player_teamId_idx';
                   readonly columns: readonly ['teamId'];
                   readonly unique: false;
                 },
@@ -662,18 +668,18 @@ type ContractBase = Omit<
                 {
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Player';
+                    readonly tableName: 'player';
                     readonly columns: readonly ['teamId'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Team';
+                    readonly tableName: 'team';
                     readonly columns: readonly ['id'];
                   };
                 },
               ];
             };
-            readonly Team: {
+            readonly team: {
               columns: {
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
@@ -724,11 +730,11 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['name', 'tag', 'tournamentId'] }];
+              uniques: readonly [{ readonly columns: readonly ['name', 'tournamentId'] }];
               indexes: readonly [
                 {
-                  readonly name: 'Team_tournamentId_idx_d0bd97a6';
-                  readonly prefix: 'Team_tournamentId_idx';
+                  readonly name: 'team_tournamentId_idx_d0bd97a6';
+                  readonly prefix: 'team_tournamentId_idx';
                   readonly columns: readonly ['tournamentId'];
                   readonly unique: false;
                 },
@@ -737,18 +743,18 @@ type ContractBase = Omit<
                 {
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Team';
+                    readonly tableName: 'team';
                     readonly columns: readonly ['tournamentId'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Tournament';
+                    readonly tableName: 'tournament';
                     readonly columns: readonly ['id'];
                   };
                 },
               ];
             };
-            readonly Tournament: {
+            readonly tournament: {
               columns: {
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
@@ -820,10 +826,10 @@ type ContractBase = Omit<
   readonly target: 'postgres';
   readonly targetFamily: 'sql';
   readonly roots: {
-    readonly Match: { readonly namespace: 'public' & NamespaceId; readonly model: 'Match' };
-    readonly Player: { readonly namespace: 'public' & NamespaceId; readonly model: 'Player' };
-    readonly Team: { readonly namespace: 'public' & NamespaceId; readonly model: 'Team' };
-    readonly Tournament: {
+    readonly match: { readonly namespace: 'public' & NamespaceId; readonly model: 'Match' };
+    readonly player: { readonly namespace: 'public' & NamespaceId; readonly model: 'Player' };
+    readonly team: { readonly namespace: 'public' & NamespaceId; readonly model: 'Team' };
+    readonly tournament: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Tournament';
     };
@@ -914,7 +920,7 @@ type ContractBase = Omit<
               };
             };
             readonly storage: {
-              readonly table: 'Match';
+              readonly table: 'match';
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly createdAt: { readonly column: 'createdAt' };
@@ -975,7 +981,7 @@ type ContractBase = Omit<
               };
             };
             readonly storage: {
-              readonly table: 'Player';
+              readonly table: 'player';
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly createdAt: { readonly column: 'createdAt' };
@@ -1072,7 +1078,7 @@ type ContractBase = Omit<
               };
             };
             readonly storage: {
-              readonly table: 'Team';
+              readonly table: 'team';
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly createdAt: { readonly column: 'createdAt' };
@@ -1144,7 +1150,7 @@ type ContractBase = Omit<
               };
             };
             readonly storage: {
-              readonly table: 'Tournament';
+              readonly table: 'tournament';
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly createdAt: { readonly column: 'createdAt' };
@@ -1213,7 +1219,7 @@ type ContractBase = Omit<
         {
           readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
           readonly ref: {
-            readonly entry: 'Match';
+            readonly entry: 'match';
             readonly field: 'id';
             readonly namespace: 'public';
           };
@@ -1222,7 +1228,7 @@ type ContractBase = Omit<
           readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly ref: {
-            readonly entry: 'Match';
+            readonly entry: 'match';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };
@@ -1230,7 +1236,7 @@ type ContractBase = Omit<
         {
           readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
           readonly ref: {
-            readonly entry: 'Player';
+            readonly entry: 'player';
             readonly field: 'id';
             readonly namespace: 'public';
           };
@@ -1239,7 +1245,7 @@ type ContractBase = Omit<
           readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly ref: {
-            readonly entry: 'Player';
+            readonly entry: 'player';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };
@@ -1247,7 +1253,7 @@ type ContractBase = Omit<
         {
           readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
           readonly ref: {
-            readonly entry: 'Team';
+            readonly entry: 'team';
             readonly field: 'id';
             readonly namespace: 'public';
           };
@@ -1256,7 +1262,7 @@ type ContractBase = Omit<
           readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly ref: {
-            readonly entry: 'Team';
+            readonly entry: 'team';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };
@@ -1264,7 +1270,7 @@ type ContractBase = Omit<
         {
           readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
           readonly ref: {
-            readonly entry: 'Tournament';
+            readonly entry: 'tournament';
             readonly field: 'id';
             readonly namespace: 'public';
           };
@@ -1273,7 +1279,7 @@ type ContractBase = Omit<
           readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly ref: {
-            readonly entry: 'Tournament';
+            readonly entry: 'tournament';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };
