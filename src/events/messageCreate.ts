@@ -1,4 +1,3 @@
-import ExpenseUser from "@/classes/ExpenseUser";
 import errors from "@/data/errors";
 import { error } from "@/helpers/response";
 import { checkPermission, isOnCooldown, type CooldownProps } from "@/helpers/utils";
@@ -13,7 +12,7 @@ const cooldown = new Map<string, CooldownProps[]>();
 export default event("messageCreate", { once: false }, async (client, message) => {
     if (!message.member || message.author.bot || !message.inGuild()) return;
 
-    const { config, db, collection } = client;
+    const { config, collection } = client;
     const { prefix, aliases } = collection.commands;
     const { handler } = config;
     const id = message.author.id;
@@ -46,14 +45,6 @@ export default event("messageCreate", { once: false }, async (client, message) =
                 target: { channel: message.channel },
                 sent: { deleteAfter: availableAt - Date.now() },
             });
-
-        const data = await db.orm.public.User.upsert({
-            create: { id },
-            update: {},
-        });
-
-        const user = new ExpenseUser(id, data, client);
-        if (!user.data) return;
 
         if (options.cooldown) {
             const availableAt = isOnCooldown(
@@ -89,12 +80,12 @@ export default event("messageCreate", { once: false }, async (client, message) =
                         if (availableAt) return await sendCooldownWarning(availableAt);
                     }
 
-                    return await sub.handler(client, user, message, args);
+                    return await sub.handler(client, message, args);
                 }
             }
         }
 
-        await command.handler(client, user, message, args);
+        await command.handler(client, message, args);
     } catch (err: any) {
         error(err.message, message);
         if (!(err.code in errors)) console.error(err);

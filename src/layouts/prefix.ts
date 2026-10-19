@@ -1,4 +1,3 @@
-import User from "@/classes/User";
 import { Collection, type Message } from "discord.js";
 import type { PrefixOptions } from "@/types/command";
 import type subpf from "./subpf";
@@ -8,7 +7,6 @@ const prefix = (
     options: PrefixOptions,
     handler: (
         client: ExtendedClient,
-        user: User,
         message: Message<true>,
         args: string[],
     ) => Promise<any>,

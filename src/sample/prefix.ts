@@ -9,5 +9,5 @@ export default prefix(
         cooldown: "5s",
         category: Category.mics,
     },
-    async (client, user, message, args) => {},
+    async (client, message, args) => {},
 );

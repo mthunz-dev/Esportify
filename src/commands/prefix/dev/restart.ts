@@ -12,7 +12,7 @@ export default prefix(
         category: Category.dev,
         hidden: true,
     },
-    async (client, user, message, args) => {
+    async (client, message, args) => {
         const embed = new EmbedBuilder();
         const button = new ButtonBuilder()
             .setStyle(ButtonStyle.Danger)

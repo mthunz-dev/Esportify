@@ -1,4 +1,3 @@
-import User from "@/classes/User";
 import {
     Collection,
     type ChatInputCommandInteraction,
@@ -17,7 +16,6 @@ const slash = (
     options: SlashOptions,
     handler: (
         client: ExtendedClient,
-        user: User,
         interaction: ChatInputCommandInteraction<"cached">,
     ) => Promise<any>,
 ) => ({

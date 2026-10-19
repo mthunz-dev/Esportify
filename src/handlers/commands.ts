@@ -21,8 +21,7 @@ export default async (client: ExtendedClient) => {
                 isValidFile(f, ["ts", "js"]),
             )) {
                 const module = (await import(`${categoryDir}/${file}`)).default as
-                    | ReturnType<typeof prefixl>
-                    | ReturnType<typeof slashl>;
+                    ReturnType<typeof prefixl> | ReturnType<typeof slashl>;
 
                 if (!module || isEmptyObject(module)) continue;
                 // logger(`Module not found at ${file}`, "warn");

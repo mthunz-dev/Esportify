@@ -22,6 +22,7 @@
     "dependencies": {
         "@google/genai": "^2.30.0",
         "@prisma/client": "latest",
+        "@prisma/orm-postgres": "^8.0.0-rc.18",
         "chalk": "^5.6.2",
         "date-fns": "^4.4.0",
         "discord.js": "^14.27.0",
@@ -31,6 +32,6 @@
         "node-schedule": "^2.1.1"
     },
     "scripts": {
-        "postinstall": "prisma skills sync || exit 0"
+        "postinstall": ""
     }
 }

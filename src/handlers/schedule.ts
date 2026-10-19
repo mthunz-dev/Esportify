@@ -1,4 +1,4 @@
-import ExtendedClient from "@/classes/ExtendedClient";
+import ExtendedClient from "@/core/ExtendedClient";
 import job from "@/layouts/job";
 import { readdirSync } from "fs";
 import scheduler from "node-schedule";

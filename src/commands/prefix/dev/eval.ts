@@ -13,7 +13,7 @@ export default prefix(
         category: Category.dev,
         hidden: true,
     },
-    async (client, user, message, args) => {
+    async (client, message, args) => {
         const embed = new EmbedBuilder();
         const _ = await import("lodash");
 
@@ -78,7 +78,7 @@ export default prefix(
             console.error(error);
         }
 
-        client.helpers.sendMessage(user, {
+        client.helpers.sendMessage(null, {
             message: { embeds: [embed] },
             sent: { deleteAfter: Number(myms("1m")) },
             target: { channel: message.channel },

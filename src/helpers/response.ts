@@ -1,4 +1,4 @@
-import { type MessageOptions } from "@/classes/MessageBuilder";
+import { type MessageOptions } from "@/helpers/MessageBuilder";
 import { EmbedBuilder, Message, type GuildBasedChannel, type Interaction } from "discord.js";
 import { disableComponents } from "./utils";
 import type User from "@/classes/User";

@@ -1,4 +1,4 @@
-import MessageBuilder from "@/classes/MessageBuilder";
+import MessageBuilder from "@/helpers/MessageBuilder";
 import prefix from "@/layouts/prefix";
 import { Category } from "@/types/enum";
 
@@ -10,7 +10,7 @@ export default prefix(
         cooldown: "5s",
         category: Category.mics,
     },
-    async (client, user, message, args) => {
+    async (client, message, args) => {
         const msg = await message.channel.send("> Pinging...");
 
         const botLatency = msg.createdTimestamp - message.createdTimestamp;

@@ -1,18 +1,75 @@
-// use prisma-8
-enum TransactionType {
-  INCOME
-  OUTCOME
+//use prisma-8
+enum TournamentStatus {
+  ACTIVE
+  PAUSED
+  ENDED
 }
 
-model User {
-  id         String                     @id
-  accounts   UserAccount[]
-  categories Category[]
-  settingId  String                     @unique
-  settings   UserSetting                @relation("User_UserSetting", fields:[settingId], references:[id])
+model Tournament {
+  id        String                     @id @default(cuid(2))
+  guildId   String
+  name      String
+  game      String
+  status    TournamentStatus           @default(ACTIVE)
+  createdAt TimestamptzString          @default(now())
+  updatedAt temporal.updatedAtString()
 
-  createdAt  TimestamptzString          @default(now())
-  updatedAt  temporal.updatedAtString()
+  teams     Team[]
+  matches   Match[]
 
-  @@map("user")
+  @@map("tournament")
+}
+
+model Team {
+  id             String                     @id @default(cuid(2))
+  name           String
+  tag            String?
+  totalScore     Int                        @default(0)
+  tournamentId   String
+  createdAt      TimestamptzString          @default(now())
+  updatedAt      temporal.updatedAtString()
+
+  tournament     Tournament                 @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  players        Player[]
+
+  matchesAsTeamA Match[]                    @relation("MatchTeamA")
+  matchesAsTeamB Match[]                    @relation("MatchTeamB")
+
+  @@unique([name, tournamentId])
+  @@map("team")
+}
+
+model Match {
+  id           String                     @id @default(cuid(2))
+  tournamentId String
+  teamAId      String
+  teamAScore   Int // VD: Số round thắng, số mạng hạ gục...
+  teamBId      String
+  teamBScore   Int
+  winnerId     String? // winnerId = null => draw
+
+  proofImage   String
+  createdAt    TimestamptzString          @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  tournament   Tournament                 @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  teamA        Team                       @relation("MatchTeamA", fields: [teamAId], references: [id])
+  teamB        Team                       @relation("MatchTeamB", fields: [teamBId], references: [id])
+
+  @@map("match")
+}
+
+model Player {
+  id        String                     @id @default(cuid(2))
+  ign       String
+  discordId String?
+  createdAt TimestamptzString          @default(now())
+  updatedAt temporal.updatedAtString()
+
+  teamId    String
+  team      Team                       @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([discordId])
+  @@map("player")
 }

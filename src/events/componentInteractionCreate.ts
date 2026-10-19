@@ -1,4 +1,3 @@
-import ExpenseUser from "@/classes/ExpenseUser";
 import { buttonLoading } from "@/data/constant";
 import { error } from "@/helpers/response";
 import { checkPermission } from "@/helpers/utils";
@@ -11,21 +10,12 @@ export default event("interactionCreate", { once: false }, async (client, intera
     if (!interaction.isButton() && !interaction.isAnySelectMenu()) return;
 
     const { buttons, selects } = client.collection.components;
-    const { id } = interaction.user;
     const customId = interaction.customId.split(".")[0];
 
     try {
         let result = false;
         const oldMessage = _.cloneDeep(interaction.message);
         const oldComponents = oldMessage.components;
-
-        const data = await client.db.orm.public.User.upsert({
-            create: { id },
-            update: {},
-            conflictOn: { id },
-        });
-
-        const user = new ExpenseUser(id, data, client);
 
         if (interaction.isButton()) {
             const component = buttons.get(customId);
@@ -37,7 +27,7 @@ export default event("interactionCreate", { once: false }, async (client, intera
                 if (!interaction.customId.endsWith("manual"))
                     await interaction.update(buttonLoading.options);
 
-                result = await component.handler(client, user, interaction, oldComponents);
+                result = await component.handler(client, interaction, oldComponents);
             } else return;
         } else if (interaction.isAnySelectMenu()) {
             const component = selects.get(customId);
@@ -49,7 +39,7 @@ export default event("interactionCreate", { once: false }, async (client, intera
                 if (!interaction.customId.endsWith("manual"))
                     await interaction.update(buttonLoading.options);
 
-                result = await component.handler(client, user, interaction, oldComponents);
+                result = await component.handler(client, interaction, oldComponents);
             } else return;
         }
 

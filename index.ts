@@ -1,25 +1,10 @@
-import { GoogleGenAI } from "@google/genai";
+import "dotenv/config";
+import ExtendedClient from "@/core/ExtendedClient";
 
-const ai = new GoogleGenAI({});
+const client = new ExtendedClient();
 
-async function checkAPI() {
-    console.log("⏳ Đang kết nối với Gemini...");
+await client.start();
 
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-3.8-flash",
-            contents:
-                "Đóng vai một trọng tài giải đấu Esport, hãy nói một câu chào mừng ngắn gọn bằng tiếng Việt.",
-        });
-
-        console.log("\n✅ API hoạt động xuất sắc! Kết quả trả về:");
-        console.log("--------------------------------------------------");
-        console.log(response.text);
-        console.log("--------------------------------------------------");
-    } catch (error) {
-        console.error("\n❌ Có lỗi xảy ra. Hãy kiểm tra lại API Key của bạn:");
-        console.error(error);
-    }
-}
-
-checkAPI();
+// Handles errors and avoids crashes, better to not remove them.
+process.on("unhandledRejection", console.error);
+process.on("uncaughtException", console.error);

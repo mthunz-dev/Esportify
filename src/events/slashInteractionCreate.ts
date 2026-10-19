@@ -1,7 +1,6 @@
 import event from "@/layouts/event";
 import { time } from "discord.js";
 import ms from "ms";
-import ExpenseUser from "@/classes/ExpenseUser";
 import { checkPermission, isOnCooldown, type CooldownProps } from "@/helpers/utils";
 import { error } from "@/helpers/response";
 import errors from "@/data/errors";
@@ -13,7 +12,7 @@ export default event("interactionCreate", { once: false }, async (client, intera
     if (!interaction.inCachedGuild()) return;
     if (!interaction.channel) return;
 
-    const { config, db, collection } = client;
+    const { config, collection } = client;
     const { handler } = config;
     const { id } = interaction.user;
 
@@ -39,15 +38,6 @@ export default event("interactionCreate", { once: false }, async (client, intera
                 target: { channel: interaction.channel! },
                 sent: { deleteAfter: availableAt - Date.now() },
             });
-
-        const data = await db.orm.public.User.upsert({
-            create: { id },
-            update: {},
-            conflictOn: { id },
-        });
-
-        const user = new ExpenseUser(id, data, client);
-        if (!user.data) return;
 
         if (options.cooldown) {
             const availableAt = isOnCooldown(
@@ -81,11 +71,11 @@ export default event("interactionCreate", { once: false }, async (client, intera
 
                     if (availableAt) return await sendCooldownWarning(availableAt);
                 }
-                return await sub.handler(client, user, interaction);
+                return await sub.handler(client, interaction);
             }
         }
 
-        await command.handler(client, user, interaction);
+        await command.handler(client, interaction);
     } catch (err: any) {
         error(err.message, interaction);
         if (!(err.code in errors)) console.error(err);

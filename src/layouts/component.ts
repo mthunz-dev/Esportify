@@ -1,4 +1,3 @@
-import User from "@/classes/User";
 import type {
     ActionRow,
     AnySelectMenuInteraction,
@@ -21,7 +20,6 @@ export const button = (
     options: ComponentOptions,
     handler: (
         client: ExtendedClient,
-        user: User,
         interaction: ButtonInteraction<"cached">,
         components: ActionRow<MessageActionRowComponent>[],
         ...additionArgs: any
@@ -33,7 +31,6 @@ export const select = (
     options: ComponentOptions,
     handler: (
         client: ExtendedClient,
-        user: User,
         interaction: AnySelectMenuInteraction<"cached">,
         components: ActionRow<MessageActionRowComponent>[],
         ...additionArgs: any

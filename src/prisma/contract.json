@@ -4,28 +4,20 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
-    "category": {
-      "model": "Category",
+    "Match": {
+      "model": "Match",
       "namespace": "public"
     },
-    "subcategory": {
-      "model": "Subcategory",
+    "Player": {
+      "model": "Player",
       "namespace": "public"
     },
-    "transaction": {
-      "model": "Transaction",
+    "Team": {
+      "model": "Team",
       "namespace": "public"
     },
-    "user": {
-      "model": "User",
-      "namespace": "public"
-    },
-    "userSetting": {
-      "model": "UserSetting",
-      "namespace": "public"
-    },
-    "user_account": {
-      "model": "UserAccount",
+    "Tournament": {
+      "model": "Tournament",
       "namespace": "public"
     }
   },
@@ -33,30 +25,27 @@
     "namespaces": {
       "public": {
         "enum": {
-          "TransactionType": {
+          "TournamentStatus": {
             "codecId": "pg/text@1",
             "members": [
               {
-                "name": "INCOME",
-                "value": "INCOME"
+                "name": "ACTIVE",
+                "value": "ACTIVE"
               },
               {
-                "name": "OUTCOME",
-                "value": "OUTCOME"
+                "name": "PAUSED",
+                "value": "PAUSED"
+              },
+              {
+                "name": "ENDED",
+                "value": "ENDED"
               }
             ]
           }
         },
         "models": {
-          "Category": {
+          "Match": {
             "fields": {
-              "cid": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -71,197 +60,152 @@
                   "kind": "scalar"
                 }
               },
-              "name": {
+              "proofImage": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
-              "updatedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "userId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "subs": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "parentId"
-                  ]
-                },
-                "to": {
-                  "model": "Subcategory",
-                  "namespace": "public"
-                }
-              },
-              "user": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "userId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "User",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "cid": {
-                  "column": "cid"
-                },
-                "createdAt": {
-                  "column": "createdAt"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "name": {
-                  "column": "name"
-                },
-                "updatedAt": {
-                  "column": "updatedAt"
-                },
-                "userId": {
-                  "column": "userId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "category"
-            }
-          },
-          "Subcategory": {
-            "fields": {
-              "cid": {
+              "teamAId": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
-              "createdAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "name": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "parentId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "updatedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "parent": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "parentId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Category",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "cid": {
-                  "column": "cid"
-                },
-                "createdAt": {
-                  "column": "createdAt"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "name": {
-                  "column": "name"
-                },
-                "parentId": {
-                  "column": "parentId"
-                },
-                "updatedAt": {
-                  "column": "updatedAt"
-                }
-              },
-              "namespaceId": "public",
-              "table": "subcategory"
-            }
-          },
-          "Transaction": {
-            "fields": {
-              "accountId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "amount": {
+              "teamAScore": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
-              "category": {
+              "teamBId": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
+              "teamBScore": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "tournamentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "winnerId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "teamA": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "teamAId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Team",
+                  "namespace": "public"
+                }
+              },
+              "teamB": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "teamBId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Team",
+                  "namespace": "public"
+                }
+              },
+              "tournament": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tournamentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tournament",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "proofImage": {
+                  "column": "proofImage"
+                },
+                "teamAId": {
+                  "column": "teamAId"
+                },
+                "teamAScore": {
+                  "column": "teamAScore"
+                },
+                "teamBId": {
+                  "column": "teamBId"
+                },
+                "teamBScore": {
+                  "column": "teamBScore"
+                },
+                "tournamentId": {
+                  "column": "tournamentId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "winnerId": {
+                  "column": "winnerId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Match"
+            }
+          },
+          "Player": {
+            "fields": {
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -269,7 +213,7 @@
                   "kind": "scalar"
                 }
               },
-              "details": {
+              "discordId": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
@@ -283,21 +227,252 @@
                   "kind": "scalar"
                 }
               },
-              "subcategory": {
+              "ign": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "teamId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "team": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "teamId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Team",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "discordId": {
+                  "column": "discordId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "ign": {
+                  "column": "ign"
+                },
+                "teamId": {
+                  "column": "teamId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Player"
+            }
+          },
+          "Team": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "tag": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
-              "time": {
+              "totalScore": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-string@1",
+                  "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
-              "type": {
+              "tournamentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "matchesAsTeamA": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "teamAId"
+                  ]
+                },
+                "to": {
+                  "model": "Match",
+                  "namespace": "public"
+                }
+              },
+              "matchesAsTeamB": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "teamBId"
+                  ]
+                },
+                "to": {
+                  "model": "Match",
+                  "namespace": "public"
+                }
+              },
+              "players": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "teamId"
+                  ]
+                },
+                "to": {
+                  "model": "Player",
+                  "namespace": "public"
+                }
+              },
+              "tournament": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tournamentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tournament",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "tag": {
+                  "column": "tag"
+                },
+                "totalScore": {
+                  "column": "totalScore"
+                },
+                "tournamentId": {
+                  "column": "tournamentId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Team"
+            }
+          },
+          "Tournament": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "game": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "guildId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
@@ -305,7 +480,7 @@
                 },
                 "valueSet": {
                   "entityKind": "enum",
-                  "entityName": "TransactionType",
+                  "entityName": "TournamentStatus",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -319,135 +494,33 @@
               }
             },
             "relations": {
-              "account": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "accountId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "UserAccount",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "accountId": {
-                  "column": "accountId"
-                },
-                "amount": {
-                  "column": "amount"
-                },
-                "category": {
-                  "column": "category"
-                },
-                "createdAt": {
-                  "column": "createdAt"
-                },
-                "details": {
-                  "column": "details"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "subcategory": {
-                  "column": "subcategory"
-                },
-                "time": {
-                  "column": "time"
-                },
-                "type": {
-                  "column": "type"
-                },
-                "updatedAt": {
-                  "column": "updatedAt"
-                }
-              },
-              "namespaceId": "public",
-              "table": "transaction"
-            }
-          },
-          "User": {
-            "fields": {
-              "createdAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "settingId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "updatedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "accounts": {
+              "matches": {
                 "cardinality": "1:N",
                 "on": {
                   "localFields": [
                     "id"
                   ],
                   "targetFields": [
-                    "userId"
+                    "tournamentId"
                   ]
                 },
                 "to": {
-                  "model": "UserAccount",
+                  "model": "Match",
                   "namespace": "public"
                 }
               },
-              "categories": {
+              "teams": {
                 "cardinality": "1:N",
                 "on": {
                   "localFields": [
                     "id"
                   ],
                   "targetFields": [
-                    "userId"
+                    "tournamentId"
                   ]
                 },
                 "to": {
-                  "model": "Category",
-                  "namespace": "public"
-                }
-              },
-              "settings": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "settingId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "UserSetting",
+                  "model": "Team",
                   "namespace": "public"
                 }
               }
@@ -457,115 +530,11 @@
                 "createdAt": {
                   "column": "createdAt"
                 },
-                "id": {
-                  "column": "id"
+                "game": {
+                  "column": "game"
                 },
-                "settingId": {
-                  "column": "settingId"
-                },
-                "updatedAt": {
-                  "column": "updatedAt"
-                }
-              },
-              "namespaceId": "public",
-              "table": "user"
-            }
-          },
-          "UserAccount": {
-            "fields": {
-              "balance": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "cid": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "createdAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "name": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "updatedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "userId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "transactions": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "accountId"
-                  ]
-                },
-                "to": {
-                  "model": "Transaction",
-                  "namespace": "public"
-                }
-              },
-              "user": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "userId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "User",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "balance": {
-                  "column": "balance"
-                },
-                "cid": {
-                  "column": "cid"
-                },
-                "createdAt": {
-                  "column": "createdAt"
+                "guildId": {
+                  "column": "guildId"
                 },
                 "id": {
                   "column": "id"
@@ -573,83 +542,15 @@
                 "name": {
                   "column": "name"
                 },
-                "updatedAt": {
-                  "column": "updatedAt"
-                },
-                "userId": {
-                  "column": "userId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "user_account"
-            }
-          },
-          "UserSetting": {
-            "fields": {
-              "createdAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "updatedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "userId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "user": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "userId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "User",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "createdAt": {
-                  "column": "createdAt"
-                },
-                "id": {
-                  "column": "id"
+                "status": {
+                  "column": "status"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
-                },
-                "userId": {
-                  "column": "userId"
                 }
               },
               "namespaceId": "public",
-              "table": "userSetting"
+              "table": "Tournament"
             }
           }
         }
@@ -661,257 +562,146 @@
       "public": {
         "entries": {
           "table": {
-            "category": {
+            "Match": {
               "columns": {
-                "cid": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
-                "name": {
+                "proofImage": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
-                "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "userId": {
+                "teamAId": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "source": {
-                    "columns": [
-                      "userId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "category"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "user"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "userId"
-                  ],
-                  "name": "category_userId_idx_a489d58a",
-                  "prefix": "category_userId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": [
-                {
-                  "columns": [
-                    "cid"
-                  ]
-                }
-              ]
-            },
-            "subcategory": {
-              "columns": {
-                "cid": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
-                "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "id": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "name": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "parentId": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "source": {
-                    "columns": [
-                      "parentId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "subcategory"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "category"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "parentId"
-                  ],
-                  "name": "subcategory_parentId_idx_6a68f597",
-                  "prefix": "subcategory_parentId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": [
-                {
-                  "columns": [
-                    "cid"
-                  ]
-                }
-              ]
-            },
-            "transaction": {
-              "checks": [
-                {
-                  "expression": "\"type\" IN ('INCOME', 'OUTCOME')",
-                  "name": "transaction_type_check_023f880c",
-                  "prefix": "transaction_type_check"
-                }
-              ],
-              "columns": {
-                "accountId": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "amount": {
+                "teamAScore": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
-                "category": {
+                "teamBId": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
-                "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nativeType": "timestamptz",
+                "teamBScore": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
-                "details": {
+                "tournamentId": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "id": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
-                },
-                "subcategory": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "time": {
-                  "codecId": "pg/timestamp-string@1",
-                  "nativeType": "timestamp",
-                  "nullable": false
-                },
-                "type": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "TransactionType",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
+                  "dataType": "pg/timestamptz",
                   "nullable": false
+                },
+                "winnerId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "Match_tournamentId_idx_d0bd97a6"
+                  },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
-                      "accountId"
+                      "tournamentId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "transaction"
+                    "tableName": "Match"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "user_account"
+                    "tableName": "Tournament"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "Match_teamAId_idx_abcaa351"
+                  },
+                  "source": {
+                    "columns": [
+                      "teamAId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Match"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Team"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "Match_teamBId_idx_136b4e79"
+                  },
+                  "source": {
+                    "columns": [
+                      "teamBId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Match"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Team"
                   }
                 }
               ],
               "indexes": [
                 {
                   "columns": [
-                    "accountId"
+                    "teamAId"
                   ],
-                  "name": "transaction_accountId_idx_cbfb3085",
-                  "prefix": "transaction_accountId_idx",
+                  "name": "Match_teamAId_idx_abcaa351",
+                  "prefix": "Match_teamAId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "teamBId"
+                  ],
+                  "name": "Match_teamBId_idx_136b4e79",
+                  "prefix": "Match_teamBId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "tournamentId"
+                  ],
+                  "name": "Match_tournamentId_idx_d0bd97a6",
+                  "prefix": "Match_tournamentId_idx",
                   "unique": false
                 }
               ],
@@ -922,195 +712,157 @@
               },
               "uniques": []
             },
-            "user": {
+            "Player": {
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
+                },
+                "discordId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
                 },
                 "id": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
-                "settingId": {
+                "ign": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "teamId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
+                  "dataType": "pg/timestamptz",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "Player_teamId_idx_f2b72ab3"
+                  },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
-                      "settingId"
+                      "teamId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "user"
+                    "tableName": "Player"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "userSetting"
-                  }
-                }
-              ],
-              "indexes": [],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": [
-                {
-                  "columns": [
-                    "settingId"
-                  ]
-                }
-              ]
-            },
-            "userSetting": {
-              "columns": {
-                "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "id": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "userId": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "source": {
-                    "columns": [
-                      "userId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "userSetting"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "user"
-                  }
-                }
-              ],
-              "indexes": [],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": [
-                {
-                  "columns": [
-                    "userId"
-                  ]
-                }
-              ]
-            },
-            "user_account": {
-              "columns": {
-                "balance": {
-                  "codecId": "pg/int4@1",
-                  "default": {
-                    "kind": "literal",
-                    "value": 0
-                  },
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "cid": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "id": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "name": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "userId": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "source": {
-                    "columns": [
-                      "userId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "user_account"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "user"
+                    "tableName": "Team"
                   }
                 }
               ],
               "indexes": [
                 {
                   "columns": [
-                    "userId"
+                    "teamId"
                   ],
-                  "name": "user_account_userId_idx_a489d58a",
-                  "prefix": "user_account_userId_idx",
+                  "name": "Player_teamId_idx_f2b72ab3",
+                  "prefix": "Player_teamId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "Team": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "tag": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "totalScore": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
+                "tournamentId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Team_tournamentId_idx_d0bd97a6"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tournamentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Team"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Tournament"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "tournamentId"
+                  ],
+                  "name": "Team_tournamentId_idx_d0bd97a6",
+                  "prefix": "Team_tournamentId_idx",
                   "unique": false
                 }
               ],
@@ -1122,18 +874,89 @@
               "uniques": [
                 {
                   "columns": [
-                    "cid"
+                    "name",
+                    "tag",
+                    "tournamentId"
                   ]
                 }
               ]
+            },
+            "Tournament": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('ACTIVE', 'PAUSED', 'ENDED')",
+                  "name": "Tournament_status_check_ae624668",
+                  "prefix": "Tournament_status_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "game": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "guildId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "ACTIVE"
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "TournamentStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             }
           },
           "valueSet": {
-            "TransactionType": {
+            "TournamentStatus": {
               "kind": "valueSet",
               "values": [
-                "INCOME",
-                "OUTCOME"
+                "ACTIVE",
+                "PAUSED",
+                "ENDED"
               ]
             }
           }
@@ -1142,21 +965,21 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f25fb9b39d6717f7b591a026cf36b63ac1cc95ee26722b258b94ec5e1b8aab46"
+    "storageHash": "90151dd03d642bf8ed2535918acbe10a4cdef51a51ac98e6648f4c67a7d6a5bf"
   },
   "execution": {
-    "executionHash": "03108b48636b922b36e5cc7bc29c6c85f3ece240b1407406f4d545894a14ffa4",
+    "executionHash": "7c1fb04da08ac95492a6a525b8d85929948e36e7f2928a82cfbe341bce4ceb6d",
     "mutations": {
       "defaults": [
         {
           "onCreate": {
-            "id": "uuidv4",
+            "id": "cuid2",
             "kind": "generator"
           },
           "ref": {
-            "column": "id",
-            "namespace": "public",
-            "table": "category"
+            "entry": "Match",
+            "field": "id",
+            "namespace": "public"
           }
         },
         {
@@ -1169,46 +992,20 @@
             "kind": "generator"
           },
           "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "category"
+            "entry": "Match",
+            "field": "updatedAt",
+            "namespace": "public"
           }
         },
         {
           "onCreate": {
-            "id": "uuidv4",
+            "id": "cuid2",
             "kind": "generator"
           },
           "ref": {
-            "column": "id",
-            "namespace": "public",
-            "table": "subcategory"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "subcategory"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "uuidv4",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "id",
-            "namespace": "public",
-            "table": "transaction"
+            "entry": "Player",
+            "field": "id",
+            "namespace": "public"
           }
         },
         {
@@ -1221,9 +1018,20 @@
             "kind": "generator"
           },
           "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "transaction"
+            "entry": "Player",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "cuid2",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "Team",
+            "field": "id",
+            "namespace": "public"
           }
         },
         {
@@ -1236,46 +1044,20 @@
             "kind": "generator"
           },
           "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "user"
+            "entry": "Team",
+            "field": "updatedAt",
+            "namespace": "public"
           }
         },
         {
           "onCreate": {
-            "id": "uuidv4",
+            "id": "cuid2",
             "kind": "generator"
           },
           "ref": {
-            "column": "id",
-            "namespace": "public",
-            "table": "user_account"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "user_account"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "uuidv4",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "id",
-            "namespace": "public",
-            "table": "userSetting"
+            "entry": "Tournament",
+            "field": "id",
+            "namespace": "public"
           }
         },
         {
@@ -1288,9 +1070,9 @@
             "kind": "generator"
           },
           "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "userSetting"
+            "entry": "Tournament",
+            "field": "updatedAt",
+            "namespace": "public"
           }
         }
       ]
@@ -1299,6 +1081,8 @@
   "capabilities": {
     "postgres": {
       "distinctOn": true,
+      "forKeyShare": true,
+      "forNoKeyUpdate": true,
       "jsonAgg": true,
       "lateral": true,
       "limit": true,
@@ -1309,7 +1093,14 @@
       "checkConstraint": true,
       "defaultInInsert": true,
       "enums": true,
+      "forShare": true,
+      "forUpdate": true,
+      "insertOnConflictSkip": true,
+      "insertOnConflictWithoutTarget": true,
       "lateral": true,
+      "lockNowait": true,
+      "lockOf": true,
+      "lockSkipLocked": true,
       "returning": true,
       "scalarList": true
     }
