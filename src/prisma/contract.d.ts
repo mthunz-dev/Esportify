@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'93fc65b9f6ab36bb42e25b87bde1e01b0ad24ffa1f1a5aa7a8b97b724d63fa0a'>;
+  StorageHashBase<'9bf62582c2a6234d9326613081ab61bca63af52c2fbc0bf49c0dfa19cee3b8fb'>;
 export type ExecutionHash =
   ExecutionHashBase<'e31c0549a1b744538a2de70e8bbf854264e518e3872145f0212f1b45512eb8a4'>;
 export type ProfileHash =
@@ -273,6 +273,7 @@ export type FieldOutputTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly registrationEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly rules: CodecTypes['pg/text@1']['output'] | null;
+      readonly rulesURL: CodecTypes['pg/text@1']['output'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -319,6 +320,7 @@ export type FieldInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly registrationEnd: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly rules: CodecTypes['pg/text@1']['input'] | null;
+      readonly rulesURL: CodecTypes['pg/text@1']['input'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -365,6 +367,7 @@ export type StorageColumnTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly registrationEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly rules: CodecTypes['pg/text@1']['output'] | null;
+      readonly rulesURL: CodecTypes['pg/text@1']['output'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -411,6 +414,7 @@ export type StorageColumnInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly registrationEnd: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly rules: CodecTypes['pg/text@1']['input'] | null;
+      readonly rulesURL: CodecTypes['pg/text@1']['input'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -468,6 +472,7 @@ export namespace Models {
     name: CodecTypes['pg/text@1']['output'];
     registrationEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     rules: CodecTypes['pg/text@1']['output'] | null;
+    rulesURL: CodecTypes['pg/text@1']['output'] | null;
     status: 'ACTIVE' | 'PAUSED' | 'ENDED';
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     matches: public_Match[];
@@ -839,6 +844,12 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly rulesURL: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly status: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -1197,6 +1208,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly rulesURL: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly status: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -1241,6 +1256,7 @@ type ContractBase = Omit<
                 readonly name: { readonly column: 'name' };
                 readonly registrationEnd: { readonly column: 'registrationEnd' };
                 readonly rules: { readonly column: 'rules' };
+                readonly rulesURL: { readonly column: 'rulesURL' };
                 readonly status: { readonly column: 'status' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };

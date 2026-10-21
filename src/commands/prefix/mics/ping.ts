@@ -1,5 +1,5 @@
 import MessageBuilder from "@/helpers/MessageBuilder";
-import prefix from "@/layouts/prefix";
+import { prefix } from "@/layouts/command";
 import { Category } from "@/types/enum";
 
 export default prefix(
@@ -19,9 +19,10 @@ export default prefix(
         const ping = new MessageBuilder()
             .addEmbeds()
             .setDescription(
-                [`> **\`Bot\`**: \`${botLatency}ms\``, `> **\`API\`**: \`${apiLatency}ms\``].join(
-                    "\n",
-                ),
+                [
+                    `> **\`Bot\`**: \`${botLatency}ms\``,
+                    `> **\`API\`**: \`${apiLatency}ms\``,
+                ].join("\n"),
             )
             .setColor(botLatency < 400 ? "Green" : "Red");
 

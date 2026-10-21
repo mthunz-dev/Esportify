@@ -1,4 +1,4 @@
-import slash from "@/layouts/slash";
+import { slash } from "@/layouts/command";
 import { SlashCommandBuilder } from "discord.js";
 
 export default slash(

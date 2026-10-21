@@ -7,9 +7,12 @@ import event from "@/layouts/event";
 export default async (client: ExtendedClient) => {
     const eventNames = client.eventNames() as (keyof ClientEvents)[];
     eventNames.forEach((eventName) => {
-        const listeners = client.listeners(eventName) as ((...args: any[]) => void)[];
+        const listeners = client.listeners(eventName) as ((
+            ...args: any[]
+        ) => void)[];
         listeners.forEach((listener) => {
-            if (listener.name === "discordListener") client.off(eventName, listener);
+            if (listener.name === "discordListener")
+                client.off(eventName, listener);
         });
     });
 
@@ -19,7 +22,8 @@ export default async (client: ExtendedClient) => {
     for (const file of readdirSync("./src/events/").filter((f: string) =>
         isValidFile(f, ["ts", "js"]),
     )) {
-        const module = (await import(`../events/${file}`)).default as ReturnType<typeof event>;
+        const module = (await import(`../events/${file}`))
+            .default as ReturnType<typeof event>;
 
         if (!module || isEmptyObject(module)) {
             logger(`Module not found at ${file}`, "warn");
@@ -31,10 +35,14 @@ export default async (client: ExtendedClient) => {
             continue;
         }
 
-        const discordListener = <T extends keyof ClientEvents>(...args: ClientEvents[T]) =>
-            module.handler(client, ...args);
+        const discordListener = <T extends keyof ClientEvents>(
+            ...args: ClientEvents[T]
+        ) => module.handler(client, ...args);
 
-        client[module.options.once ? "once" : "on"](module.name, discordListener);
+        client[module.options.once ? "once" : "on"](
+            module.name,
+            discordListener,
+        );
         count++;
     }
 

@@ -552,6 +552,13 @@
                   "kind": "scalar"
                 }
               },
+              "rulesURL": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "status": {
                 "nullable": false,
                 "type": {
@@ -627,6 +634,9 @@
                 },
                 "rules": {
                   "column": "rules"
+                },
+                "rulesURL": {
+                  "column": "rulesURL"
                 },
                 "status": {
                   "column": "status"
@@ -1066,6 +1076,11 @@
                   "dataType": "pg/text",
                   "nullable": true
                 },
+                "rulesURL": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "status": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -1128,7 +1143,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "93fc65b9f6ab36bb42e25b87bde1e01b0ad24ffa1f1a5aa7a8b97b724d63fa0a"
+    "storageHash": "9bf62582c2a6234d9326613081ab61bca63af52c2fbc0bf49c0dfa19cee3b8fb"
   },
   "execution": {
     "executionHash": "e31c0549a1b744538a2de70e8bbf854264e518e3872145f0212f1b45512eb8a4",

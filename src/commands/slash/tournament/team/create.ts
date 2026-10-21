@@ -1,4 +1,4 @@
-import subsl from "@/layouts/subsl";
+import { subsl } from "@/layouts/command";
 import {
     LabelBuilder,
     ModalBuilder,
@@ -46,16 +46,22 @@ export default subsl(
         )
         .addUserOption(
             (o) =>
-                o.setName("player2").setDescription("Player 2").setDescriptionLocalizations({
-                    vi: "Người chơi 1",
-                }),
+                o
+                    .setName("player2")
+                    .setDescription("Player 2")
+                    .setDescriptionLocalizations({
+                        vi: "Người chơi 1",
+                    }),
             // .setRequired(true),
         )
         .addStringOption(
             (o) =>
-                o.setName("player2_ingame").setDescription("Player 2's Ingame").setDescriptionLocalizations({
-                    vi: "Tên game của người chơi 2",
-                }),
+                o
+                    .setName("player2_ingame")
+                    .setDescription("Player 2's Ingame")
+                    .setDescriptionLocalizations({
+                        vi: "Tên game của người chơi 2",
+                    }),
             // .setRequired(true),
         ),
     // .addUserOption((o) =>
@@ -153,7 +159,10 @@ export default subsl(
 
         // eslint-disable-next-line prefer-const
         let playersToCreate = [];
-        const maxPlayer = interaction.options.data[0].options!.filter((o) => o.name.startsWith("player")).length / 2;
+        const maxPlayer =
+            interaction.options.data[0].options!.filter((o) =>
+                o.name.startsWith("player"),
+            ).length / 2;
 
         for (let i = 1; i <= maxPlayer; i++) {
             const user = interaction.options.getUser(`player${i}`);
@@ -171,7 +180,10 @@ export default subsl(
             status: "ACTIVE",
         });
 
-        if (!tournament) throw new Error("Chưa có giải đấu nào đang diễn ra trong máy chủ này!");
+        if (!tournament)
+            throw new Error(
+                "Chưa có giải đấu nào đang diễn ra trong máy chủ này!",
+            );
 
         try {
             await client.db.orm.public.Team.create({
@@ -185,7 +197,11 @@ export default subsl(
                 `✅ Tạo thành công đội thi đấu **${name}** thuộc giải thi đấu **${tournament.name}** với **${playersToCreate.length}** thành viên`,
             );
         } catch (error) {
-            if (error instanceof Error && "sqlState" in error && error.sqlState === "23505") {
+            if (
+                error instanceof Error &&
+                "sqlState" in error &&
+                error.sqlState === "23505"
+            ) {
                 throw Error("Đội thi đã tồn tại trong giải đấu");
             }
 

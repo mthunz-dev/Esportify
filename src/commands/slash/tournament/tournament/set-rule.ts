@@ -1,5 +1,5 @@
 import { FileHelper } from "@/helpers/file.helper";
-import subsl from "@/layouts/subsl";
+import { subsl } from "@/layouts/command";
 import { SlashCommandSubcommandBuilder } from "discord.js";
 
 export default subsl(
@@ -11,7 +11,9 @@ export default subsl(
             o
                 .setName("rule_file")
                 .setDescription("Rule of the tournament (.txt format)")
-                .setDescriptionLocalizations({ vi: "Thể lệ của giải đấu (định dạng file .txt)" })
+                .setDescriptionLocalizations({
+                    vi: "Thể lệ của giải đấu (định dạng file .txt)",
+                })
                 .setRequired(true),
         ),
     {
@@ -36,7 +38,10 @@ export default subsl(
 
         const attachment = interaction.options.getAttachment("rule_file", true);
 
-        if (!attachment.name.endsWith(".txt") && !attachment.contentType?.includes("text/plain")) {
+        if (
+            !attachment.name.endsWith(".txt") &&
+            !attachment.contentType?.includes("text/plain")
+        ) {
             return interaction.editReply(
                 "❌ Hệ thống AI chỉ hỗ trợ đọc file văn bản thuần túy (`.txt`) để đảm bảo độ chính xác!",
             );
@@ -45,7 +50,9 @@ export default subsl(
         const rulesText = await FileHelper.readTextFromUrl(attachment.url);
 
         if (!rulesText || rulesText.length === 0) {
-            return interaction.editReply("❌ File bị rỗng hoặc hệ thống không thể đọc được nội dung.");
+            return interaction.editReply(
+                "❌ File bị rỗng hoặc hệ thống không thể đọc được nội dung.",
+            );
         }
 
         await db.orm.public.Tournament.where({

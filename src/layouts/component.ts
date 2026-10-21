@@ -1,9 +1,8 @@
 import type {
-    ActionRow,
     AnySelectMenuInteraction,
     ButtonInteraction,
-    MessageActionRowComponent,
     PermissionResolvable,
+    TopLevelComponent,
 } from "discord.js";
 
 export interface ComponentOptions {
@@ -21,7 +20,7 @@ export const button = (
     handler: (
         client: ExtendedClient,
         interaction: ButtonInteraction<"cached">,
-        components: ActionRow<MessageActionRowComponent>[],
+        components: TopLevelComponent[],
         ...additionArgs: any
     ) => Promise<any>,
 ) => ({ customId, options, handler });
@@ -32,7 +31,7 @@ export const select = (
     handler: (
         client: ExtendedClient,
         interaction: AnySelectMenuInteraction<"cached">,
-        components: ActionRow<MessageActionRowComponent>[],
+        components: TopLevelComponent[],
         ...additionArgs: any
     ) => Promise<any>,
 ) => ({ customId, options, handler });

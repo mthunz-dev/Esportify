@@ -1,6 +1,16 @@
-import { bold, Collection, resolveColor, Message, GuildMember } from "discord.js";
+import {
+    bold,
+    Collection,
+    resolveColor,
+    Message,
+    GuildMember,
+} from "discord.js";
 import _ from "lodash";
-import type { PrefixOptions, SlashOptions, SubPrefixOptions } from "@/types/command";
+import type {
+    PrefixOptions,
+    SlashOptions,
+    SubPrefixOptions,
+} from "@/types/command";
 import { isNumber } from "./validator";
 import config from "@/config";
 import type { ComponentOptions } from "@/layouts/component";
@@ -104,7 +114,8 @@ interface MyMsOptions {
 }
 
 export const myms = (time: string | number, options?: MyMsOptions) => {
-    const timeRegex = /^(?:(\d+))?(?:(\d+d))?(?:(\d+h))?(?:(\d+m))?(?:(\d+s))?$/;
+    const timeRegex =
+        /^(?:(\d+))?(?:(\d+d))?(?:(\d+h))?(?:(\d+m))?(?:(\d+s))?$/;
     if (!timeRegex.test(String(time))) return "INVALID_TIME";
 
     const units = {
@@ -175,7 +186,9 @@ export const isOnCooldown = (
     };
 
     if (data) {
-        const cooldownIndex = data.findIndex(({ name }) => name === commandName);
+        const cooldownIndex = data.findIndex(
+            ({ name }) => name === commandName,
+        );
 
         if (cooldownIndex + 1) {
             const { availableAt } = data[cooldownIndex];
@@ -192,7 +205,9 @@ export const isOnCooldown = (
         let data = cooldown.get(userId);
 
         if (data) {
-            const cooldownIndex = data.findIndex(({ name }) => name === commandName);
+            const cooldownIndex = data.findIndex(
+                ({ name }) => name === commandName,
+            );
 
             if (!(cooldownIndex + 1)) {
                 data = data.splice(cooldownIndex, 1);
@@ -217,7 +232,8 @@ export const checkPermission = (
     const isOwner = id === users.ownerId;
     const isContributor = users.contributors.includes(id);
 
-    if (options.contributorsOnly && !isContributor && !isOwner && !isDev) return false;
+    if (options.contributorsOnly && !isContributor && !isOwner && !isDev)
+        return false;
     if (options.ownerOnly && !isDev && !isOwner) return false;
     if (options.developersOnly && !isDev) return false;
 

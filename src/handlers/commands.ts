@@ -2,16 +2,16 @@
 import { isEmptyObject, isValidFile } from "@/helpers/validator";
 import logger from "@/helpers/logger";
 import { readdirSync, existsSync } from "fs";
-import prefixl from "@/layouts/prefix";
-import subpf from "@/layouts/subpf";
-import slashl from "@/layouts/slash";
-import subsl from "@/layouts/subsl";
+import { prefix as prefixl, subpf, slash as slashl } from "@/layouts/command";
+import { subsl } from "@/layouts/command";
 import path from "path";
 
 export default async (client: ExtendedClient) => {
     const { commands } = client.collection;
     const { prefix, slash } = commands;
-    const commamdDir = path.resolve(__dirname, "../commands").replace(/\\/g, "/");
+    const commamdDir = path
+        .resolve(__dirname, "../commands")
+        .replace(/\\/g, "/");
 
     for (const type of readdirSync(commamdDir)) {
         const typeDir = `${commamdDir}/${type}`;
@@ -20,7 +20,8 @@ export default async (client: ExtendedClient) => {
             for (const file of readdirSync(categoryDir).filter((f) =>
                 isValidFile(f, ["ts", "js"]),
             )) {
-                const module = (await import(`${categoryDir}/${file}`)).default as
+                const module = (await import(`${categoryDir}/${file}`))
+                    .default as
                     ReturnType<typeof prefixl> | ReturnType<typeof slashl>;
 
                 if (!module || isEmptyObject(module)) continue;
@@ -63,15 +64,22 @@ export default async (client: ExtendedClient) => {
                         if (existsSync(subCommandDir)) {
                             const { subs, aliases } = module;
 
-                            for (const subfile of readdirSync(subCommandDir).filter((f: string) =>
+                            for (const subfile of readdirSync(
+                                subCommandDir,
+                            ).filter((f: string) =>
                                 isValidFile(f, ["ts", "js"]),
                             )) {
-                                const submodule = (await import(`${subCommandDir}/${subfile}`))
-                                    .default as ReturnType<typeof subpf>;
-                                if (!submodule || isEmptyObject(submodule)) continue;
+                                const submodule = (
+                                    await import(`${subCommandDir}/${subfile}`)
+                                ).default as ReturnType<typeof subpf>;
+                                if (!submodule || isEmptyObject(submodule))
+                                    continue;
 
                                 if (module.options.ignore) {
-                                    logger(`Ignore command at ${module.name}/${subfile}`, "ignore");
+                                    logger(
+                                        `Ignore command at ${module.name}/${subfile}`,
+                                        "ignore",
+                                    );
                                     continue;
                                 }
 
@@ -93,18 +101,25 @@ export default async (client: ExtendedClient) => {
                 } else {
                     slash.set(module.structure.name, module);
 
-                    if (module.options.sub && "addSubcommand" in module.structure) {
+                    if (
+                        module.options.sub &&
+                        "addSubcommand" in module.structure
+                    ) {
                         const subCommandDir = `${categoryDir}/${module.structure.name}`;
 
                         if (existsSync(subCommandDir)) {
                             const { subs } = module;
 
-                            for (const subfile of readdirSync(subCommandDir).filter((f: string) =>
+                            for (const subfile of readdirSync(
+                                subCommandDir,
+                            ).filter((f: string) =>
                                 isValidFile(f, ["ts", "js"]),
                             )) {
-                                const submodule = (await import(`${subCommandDir}/${subfile}`))
-                                    .default as ReturnType<typeof subsl>;
-                                if (!submodule || isEmptyObject(submodule)) continue;
+                                const submodule = (
+                                    await import(`${subCommandDir}/${subfile}`)
+                                ).default as ReturnType<typeof subsl>;
+                                if (!submodule || isEmptyObject(submodule))
+                                    continue;
 
                                 if (module.options.ignore) {
                                     logger(
@@ -114,22 +129,29 @@ export default async (client: ExtendedClient) => {
                                     continue;
                                 }
 
-                                module.structure.addSubcommand(submodule.structure);
+                                module.structure.addSubcommand(
+                                    submodule.structure,
+                                );
                                 subs.set(submodule.structure.name, submodule);
                             }
                         }
                     }
 
                     if (module.options.global) {
-                        client.publicApplicationcommandsArray.push(module.structure);
+                        client.publicApplicationcommandsArray.push(
+                            module.structure,
+                        );
                     } else {
-                        client.privateApplicationcommandsArray.push(module.structure);
+                        client.privateApplicationcommandsArray.push(
+                            module.structure,
+                        );
                     }
                 }
             }
         }
     }
 
-    if (prefix.size) logger(`Initialized ${prefix.size} prefix commands`, "done");
+    if (prefix.size)
+        logger(`Initialized ${prefix.size} prefix commands`, "done");
     if (slash.size) logger(`Initialized ${slash.size} slash commands`, "done");
 };

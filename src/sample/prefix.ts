@@ -1,4 +1,4 @@
-import prefix from "@/layouts/prefix";
+import { prefix } from "@/layouts/command";
 import { Category } from "@/types/enum";
 
 export default prefix(

@@ -2,3 +2,6 @@ node_modules
 LICENSE
 bun.lockb
 README.md
+migrations
+eslint.config.js
+package.json

@@ -1,6 +1,6 @@
 import { error } from "@/helpers/response";
 import { myms } from "@/helpers/utils";
-import prefix from "@/layouts/prefix";
+import { prefix } from "@/layouts/command";
 import { EmbedBuilder } from "discord.js";
 import { inspect } from "node:util";
 import { Category } from "@/types/enum";
@@ -17,7 +17,8 @@ export default prefix(
         const embed = new EmbedBuilder();
         const _ = await import("lodash");
 
-        if (args.length === 0) return await error("Please type code to run.", message);
+        if (args.length === 0)
+            return await error("Please type code to run.", message);
 
         const start = Date.now();
 

@@ -6,24 +6,36 @@ const ai = new GoogleGenAI({});
 const matchSchema: Schema = {
     type: Type.OBJECT,
     properties: {
-        teamAScore: { type: Type.INTEGER, description: "Điểm số hoặc số round thắng của đội A" },
-        teamBScore: { type: Type.INTEGER, description: "Điểm số hoặc số round thắng của đội B" },
+        teamAScore: {
+            type: Type.INTEGER,
+            description: "Điểm số hoặc số round thắng của đội A",
+        },
+        teamBScore: {
+            type: Type.INTEGER,
+            description: "Điểm số hoặc số round thắng của đội B",
+        },
         teamAPlayers: {
             type: Type.ARRAY,
             items: { type: Type.STRING },
-            description: "Danh sách tên trong game (ingame/IGN) của người chơi thuộc team A",
+            description:
+                "Danh sách tên trong game (ingame/IGN) của người chơi thuộc team A",
         },
         teamBPlayers: {
             type: Type.ARRAY,
             items: { type: Type.STRING },
-            description: "Danh sách tên trong game (ingame/IGN) của người chơi thuộc team B",
+            description:
+                "Danh sách tên trong game (ingame/IGN) của người chơi thuộc team B",
         },
     },
     required: ["teamAScore", "teamBScore", "teamAPlayers", "teamBPlayers"],
 };
 
 export class AiService {
-    static async analyzeMatchImage(imageUrl: string, mimeType: string, gameConfig: GameConfig) {
+    static async analyzeMatchImage(
+        imageUrl: string,
+        mimeType: string,
+        gameConfig: GameConfig,
+    ) {
         try {
             const imageResponse = await fetch(imageUrl);
             const arrayBuffer = await imageResponse.arrayBuffer();
@@ -33,7 +45,15 @@ export class AiService {
 
             const response = await ai.models.generateContent({
                 model: "gemini-3.6-flash",
-                contents: [{ inlineData: { data: buffer.toString("base64"), mimeType } }, finalPrompt],
+                contents: [
+                    {
+                        inlineData: {
+                            data: buffer.toString("base64"),
+                            mimeType,
+                        },
+                    },
+                    finalPrompt,
+                ],
                 config: {
                     responseMimeType: "application/json",
                     responseSchema: matchSchema,
@@ -52,7 +72,11 @@ export class AiService {
         }
     }
 
-    static async resolveRuleQuery(question: string, rules: string, gameName: string) {
+    static async resolveRuleQuery(
+        question: string,
+        rules: string,
+        gameName: string,
+    ) {
         try {
             const systemInstruction = `Bạn là Trợ lý AI của giải đấu eSports (Bộ môn: ${gameName.toUpperCase()}).
         Dưới đây là toàn bộ THỂ LỆ và LUẬT LỆ của giải:

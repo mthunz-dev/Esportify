@@ -1,5 +1,10 @@
-import prefix from "@/layouts/prefix";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from "discord.js";
+import { prefix } from "@/layouts/command";
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    EmbedBuilder,
+} from "discord.js";
 import { Category } from "@/types/enum";
 import { exec } from "node:child_process";
 
@@ -21,7 +26,9 @@ export default prefix(
         const row = new ActionRowBuilder<ButtonBuilder>().setComponents(button);
         const restartEmbed = embed
             .setColor("Red")
-            .setDescription(`**Are you sure you want to restart **\`${client.user?.username}\`?`)
+            .setDescription(
+                `**Are you sure you want to restart **\`${client.user?.username}\`?`,
+            )
             .setTimestamp();
 
         const msg = await message.channel.send({
@@ -31,7 +38,9 @@ export default prefix(
 
         const collector = msg.createMessageComponentCollector({
             time: 30000,
-            filter: (f) => f.customId === "confirm-restart" && f.user.id === message.author.id,
+            filter: (f) =>
+                f.customId === "confirm-restart" &&
+                f.user.id === message.author.id,
         });
 
         collector.on("collect", async (i) => {

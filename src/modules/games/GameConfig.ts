@@ -1,4 +1,3 @@
-
 export interface GameConfig {
     id: string;
     displayName: string;

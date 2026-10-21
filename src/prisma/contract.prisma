@@ -23,6 +23,7 @@ model Tournament {
   name            String
   game            String
   rules           String?
+  rulesURL        String?
   registrationEnd TimestamptzString?
   status          TournamentStatus           @default(ACTIVE)
   createdAt       TimestamptzString          @default(now())

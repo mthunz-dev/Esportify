@@ -1,4 +1,4 @@
-import subsl from "@/layouts/subsl";
+import { subsl } from "@/layouts/command";
 import { SlashCommandSubcommandBuilder } from "discord.js";
 import { SupportedGames } from "@/modules/games";
 import { FileHelper } from "@/helpers/file.helper";
@@ -35,7 +35,9 @@ export default subsl(
             o
                 .setName("rule_file")
                 .setDescription("Rule of the tournament (.txt format)")
-                .setDescriptionLocalizations({ vi: "Thể lệ của giải đấu (định dạng file .txt)" })
+                .setDescriptionLocalizations({
+                    vi: "Thể lệ của giải đấu (định dạng file .txt)",
+                })
                 .setRequired(false),
         ),
     {
@@ -55,13 +57,21 @@ export default subsl(
             status: "ACTIVE",
         });
 
-        if (pendingTournament) throw new Error("Đang có một giải đấu diễn ra trong máy chủ này rồi!");
+        if (pendingTournament)
+            throw new Error(
+                "Đang có một giải đấu diễn ra trong máy chủ này rồi!",
+            );
 
         let rules = null;
 
         if (ruleFile) {
-            if (!ruleFile.name.endsWith(".txt") && !ruleFile.contentType?.includes("text/plain")) {
-                return interaction.editReply("❌ Vui lòng chỉ sử dụng file định dạng `.txt` cho thể lệ!");
+            if (
+                !ruleFile.name.endsWith(".txt") &&
+                !ruleFile.contentType?.includes("text/plain")
+            ) {
+                return interaction.editReply(
+                    "❌ Vui lòng chỉ sử dụng file định dạng `.txt` cho thể lệ!",
+                );
             }
 
             rules = await FileHelper.readTextFromUrl(ruleFile.url);

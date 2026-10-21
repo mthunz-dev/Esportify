@@ -4,8 +4,8 @@ import commands from "@/handlers/commands";
 import components from "@/handlers/components";
 import schedule from "@/handlers/schedule";
 import events from "@/handlers/events";
-import type prefix from "@/layouts/prefix";
-import type slash from "@/layouts/slash";
+import type { prefix, slash } from "@/layouts/command";
+// import type modal from "@/layouts/modal";
 import type { button, select } from "@/layouts/component";
 import { sendMessage } from "@/helpers/response";
 import errors from "@/data/errors";
@@ -45,6 +45,7 @@ export default class ExtendedClient extends Client<true> {
         components: {
             buttons: new Collection<string, ReturnType<typeof button>>(),
             selects: new Collection<string, ReturnType<typeof select>>(),
+            // modals: new Collection<string, ReturnType<typeof modal>>(),
         },
     };
 
@@ -53,11 +54,15 @@ export default class ExtendedClient extends Client<true> {
     };
 
     public publicApplicationcommandsArray: (
-        SlashCommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder
+        | SlashCommandBuilder
+        | SlashCommandOptionsOnlyBuilder
+        | SlashCommandSubcommandsOnlyBuilder
     )[] = [];
 
     public privateApplicationcommandsArray: (
-        SlashCommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder
+        | SlashCommandBuilder
+        | SlashCommandOptionsOnlyBuilder
+        | SlashCommandSubcommandsOnlyBuilder
     )[] = [];
 
     constructor() {

@@ -1,15 +1,25 @@
 import { type MessageOptions } from "@/helpers/MessageBuilder";
-import { EmbedBuilder, Message, type GuildBasedChannel, type Interaction } from "discord.js";
+import {
+    EmbedBuilder,
+    Message,
+    type GuildBasedChannel,
+    type Interaction,
+} from "discord.js";
 import { disableComponents } from "./utils";
 import type User from "@/classes/User";
 import config from "@/config";
 import _ from "lodash";
 import { buttonLoading } from "@/data/constant";
 
-export const error = async (err: string, meta: Message<boolean> | Interaction<"cached">) => {
+export const error = async (
+    err: string,
+    meta: Message<boolean> | Interaction<"cached">,
+) => {
     const message = {
         embeds: [
-            new EmbedBuilder().setColor("Red").setDescription(`${config.emojis.cross} ${err}`),
+            new EmbedBuilder()
+                .setColor("Red")
+                .setDescription(`${config.emojis.cross} ${err}`),
         ],
     };
 
@@ -72,7 +82,8 @@ export const sendMessage =
         let sentMessage: Message<true> | null = null;
 
         if (message) sentMessage = await message.reply({ ...options.message });
-        else if (channel?.isSendable()) sentMessage = await channel.send(options.message);
+        else if (channel?.isSendable())
+            sentMessage = await channel.send(options.message);
         else if (interaction?.isRepliable())
             sentMessage = await interaction.editReply(options.message);
 
@@ -94,7 +105,10 @@ export const sendMessage =
                 if (!allowedIds?.includes(interaction.user.id)) {
                     if ("update" in interaction) {
                         await interaction.deferUpdate();
-                        return error("Bạn ko có quyền sử dụng tương tác này !", interaction);
+                        return error(
+                            "Bạn ko có quyền sử dụng tương tác này !",
+                            interaction,
+                        );
                     } else return false;
                 } else return true;
             };
@@ -122,7 +136,8 @@ export const sendMessage =
                     let result = false;
 
                     if (interaction.isButton()) {
-                        const buttonComponent = components.buttons.get(componentId);
+                        const buttonComponent =
+                            components.buttons.get(componentId);
 
                         if (buttonComponent)
                             result = await buttonComponent.handler(
@@ -135,7 +150,8 @@ export const sendMessage =
                     } else if (interaction.isStringSelectMenu()) {
                         const value = interaction.values[0];
                         const menuComponent =
-                            components.selects.get(value) || components.selects.get(componentId);
+                            components.selects.get(value) ||
+                            components.selects.get(componentId);
 
                         if (menuComponent)
                             result = await menuComponent.handler(
@@ -149,17 +165,26 @@ export const sendMessage =
 
                     if (!result) {
                         await interaction.message.edit({
-                            ..._.pick(oldMessage, ["content", "embeds", "components"]),
+                            ..._.pick(oldMessage, [
+                                "content",
+                                "embeds",
+                                "components",
+                            ]),
                         });
                     }
                 } catch (err: any) {
                     await interaction.message.edit({
-                        ..._.pick(oldMessage, ["content", "embeds", "components"]),
+                        ..._.pick(oldMessage, [
+                            "content",
+                            "embeds",
+                            "components",
+                        ]),
                     });
 
                     if (err instanceof Error) {
                         error(err.message, interaction);
-                        if (!/[À-Ỹà-ỹĂ-Ỵă-ỵĐđ]/.test(err.message)) console.error(err);
+                        if (!/[À-Ỹà-ỹĂ-Ỵă-ỵĐđ]/.test(err.message))
+                            console.error(err);
                     }
                 }
             });

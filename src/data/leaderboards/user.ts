@@ -1,2 +1,2 @@
-import type { LeaderboardOptions } from "typings/leaderboard";
-export default [] as LeaderboardOptions[];
+// import type { LeaderboardOptions } from "typings/leaderboard";
+// export default [] as LeaderboardOptions[];

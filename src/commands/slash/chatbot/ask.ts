@@ -1,4 +1,4 @@
-import slash from "@/layouts/slash";
+import { slash } from "@/layouts/command";
 import { AiService } from "@/services/ai.service";
 import { SlashCommandBuilder } from "discord.js";
 
@@ -6,13 +6,21 @@ export default slash(
     new SlashCommandBuilder()
         .setName("ask")
         .setContexts(0)
-        .setDescription("Ask AI Assistant about rules and regulations of tournament")
-        .setDescriptionLocalizations({ vi: "Hỏi Trợ lý AI mọi thắc mắc về luật lệ và thể lệ của giải đấu" })
+        .setDescription(
+            "Ask AI Assistant about rules and regulations of tournament",
+        )
+        .setDescriptionLocalizations({
+            vi: "Hỏi Trợ lý AI mọi thắc mắc về luật lệ và thể lệ của giải đấu",
+        })
         .addStringOption((o) =>
             o
                 .setName("question")
-                .setDescription("Your question (Eg: When is the final match start?)")
-                .setDescriptionLocalizations({ vi: "Câu hỏi của bạn (VD: Trận chung kết diễn ra khi nào?)" })
+                .setDescription(
+                    "Your question (Eg: When is the final match start?)",
+                )
+                .setDescriptionLocalizations({
+                    vi: "Câu hỏi của bạn (VD: Trận chung kết diễn ra khi nào?)",
+                })
                 .setRequired(true),
         ),
     {
@@ -38,13 +46,21 @@ export default slash(
         }
 
         // 4. Chuyển logic sang AiService xử lý
-        const answer = await AiService.resolveRuleQuery(question, activeTournament.rules, activeTournament.game);
+        const answer = await AiService.resolveRuleQuery(
+            question,
+            activeTournament.rules,
+            activeTournament.game,
+        );
 
         if (!answer) {
-            return interaction.editReply("❌ Hệ thống AI đang bận xử lý giải đấu, vui lòng thử lại sau ít phút.");
+            return interaction.editReply(
+                "❌ Hệ thống AI đang bận xử lý giải đấu, vui lòng thử lại sau ít phút.",
+            );
         }
 
         // 5. Trả kết quả ẩn cho riêng người dùng đó
-        await interaction.editReply(`**❓ Câu hỏi:** ${question}\n\n**🤖 Trợ lý AI:**\n${answer}`);
+        await interaction.editReply(
+            `**❓ Câu hỏi:** ${question}\n\n**🤖 Trợ lý AI:**\n${answer}`,
+        );
     },
 );

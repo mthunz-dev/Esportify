@@ -150,7 +150,9 @@ export default class MessageBuilder {
         this.options.components ??= [];
 
         for (const component of components) {
-            const row = new ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>();
+            const row = new ActionRowBuilder<
+                ButtonBuilder | StringSelectMenuBuilder
+            >();
             for (const cp of component) {
                 let cpBuilder;
 
@@ -161,7 +163,8 @@ export default class MessageBuilder {
                         if (cp.label) cpBuilder.setLabel(cp.label);
                         if (cp.emoji) cpBuilder.setEmoji(cp.emoji);
 
-                        if (cp.style === ButtonStyle.Link) cpBuilder.setURL(cp.url);
+                        if (cp.style === ButtonStyle.Link)
+                            cpBuilder.setURL(cp.url);
                         else cpBuilder.setCustomId(cp.customId);
 
                         break;
@@ -169,7 +172,8 @@ export default class MessageBuilder {
                         cpBuilder = new StringSelectMenuBuilder()
                             .setCustomId(cp.customId)
                             .setOptions(cp.options);
-                        if (cp.placeholder) cpBuilder.setPlaceholder(cp.placeholder);
+                        if (cp.placeholder)
+                            cpBuilder.setPlaceholder(cp.placeholder);
                         break;
                 }
 
@@ -188,7 +192,9 @@ export default class MessageBuilder {
         this.options.components = [];
 
         for (const component of components) {
-            const row = new ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>();
+            const row = new ActionRowBuilder<
+                ButtonBuilder | StringSelectMenuBuilder
+            >();
             for (const cp of component) {
                 let cpBuilder;
 
@@ -201,7 +207,8 @@ export default class MessageBuilder {
                         if (cp.label) cpBuilder.setLabel(cp.label);
                         if (cp.emoji) cpBuilder.setEmoji(cp.emoji);
 
-                        if (cp.style === ButtonStyle.Link) cpBuilder.setURL(cp.url);
+                        if (cp.style === ButtonStyle.Link)
+                            cpBuilder.setURL(cp.url);
                         else cpBuilder.setCustomId(cp.customId);
 
                         break;
@@ -210,7 +217,8 @@ export default class MessageBuilder {
                             .setCustomId(cp.customId)
                             .setOptions(cp.options)
                             .setDisabled(!!cp.disabled);
-                        if (cp.placeholder) cpBuilder.setPlaceholder(cp.placeholder);
+                        if (cp.placeholder)
+                            cpBuilder.setPlaceholder(cp.placeholder);
                         break;
                 }
 

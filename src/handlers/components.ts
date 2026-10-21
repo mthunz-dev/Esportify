@@ -9,7 +9,8 @@ export default async (client: ExtendedClient) => {
         for (const file of readdirSync(`./src/components/${type}/`).filter(
             (f) => f.endsWith(".js") || f.endsWith(".ts"),
         )) {
-            const module = (await import(`../components/${type}/${file}`)).default;
+            const module = (await import(`../components/${type}/${file}`))
+                .default;
 
             if (!module || isEmptyObject(module)) {
                 logger(`Module not found at: ${file}`, "warn");
@@ -22,7 +23,10 @@ export default async (client: ExtendedClient) => {
             }
 
             if (!ComponentsType.includes(type)) {
-                logger(`Invalid folder name, it must be ${ComponentsType.join("/")}`, "err");
+                logger(
+                    `Invalid folder name, it must be ${ComponentsType.join("/")}`,
+                    "err",
+                );
                 continue;
             }
 

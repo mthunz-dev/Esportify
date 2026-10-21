@@ -1,4 +1,8 @@
-const job = (id: string, time: string, handler: (client: ExtendedClient) => Promise<any>) => ({
+const job = (
+    id: string,
+    time: string,
+    handler: (client: ExtendedClient) => Promise<any>,
+) => ({
     id,
     time,
     handler,

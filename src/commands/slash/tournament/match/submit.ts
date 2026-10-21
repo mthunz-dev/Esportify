@@ -1,5 +1,5 @@
 import MessageBuilder from "@/helpers/MessageBuilder";
-import subsl from "@/layouts/subsl";
+import { subsl } from "@/layouts/command";
 import { getGameConfig } from "@/modules/games";
 import { AiService } from "@/services/ai.service";
 import { SlashCommandSubcommandBuilder } from "discord.js";
@@ -8,12 +8,16 @@ export default subsl(
     new SlashCommandSubcommandBuilder()
         .setName("submit")
         .setDescription("Submit match result to AI to analysis")
-        .setDescriptionLocalizations({ vi: "Gửi kết quả trận đấu cho AI để phân tích" })
+        .setDescriptionLocalizations({
+            vi: "Gửi kết quả trận đấu cho AI để phân tích",
+        })
         .addAttachmentOption((o) =>
             o
                 .setName("image")
                 .setDescription("Screenshot of the match result")
-                .setDescriptionLocalizations({ vi: "Ảnh chụp màn hình kết quả trận đấu" })
+                .setDescriptionLocalizations({
+                    vi: "Ảnh chụp màn hình kết quả trận đấu",
+                })
                 .setRequired(true),
         ),
     {
@@ -24,12 +28,16 @@ export default subsl(
         const { db } = client;
 
         await interaction.deferReply();
-        await interaction.editReply("⏳ Trọng tài AI đang quét ảnh và tìm kiếm Ingame tuyển thủ...");
+        await interaction.editReply(
+            "⏳ Trọng tài AI đang quét ảnh và tìm kiếm Ingame tuyển thủ...",
+        );
 
         const attachment = interaction.options.getAttachment("image", true);
 
         if (!attachment.contentType?.startsWith("image/"))
-            return interaction.editReply("❌ Vui lòng đính kèm một file hình ảnh hợp lệ (PNG, JPG)");
+            return interaction.editReply(
+                "❌ Vui lòng đính kèm một file hình ảnh hợp lệ (PNG, JPG)",
+            );
 
         const activeTournament = await db.orm.public.Tournament.first({
             guildId: interaction.guildId!,
@@ -45,22 +53,39 @@ export default subsl(
         const gameConfig = getGameConfig(activeTournament.game);
 
         if (!gameConfig) {
-            return interaction.editReply("❌ Game của giải đấu không tồn tại, vui lòng kiểm tra lại hệ thống !");
+            return interaction.editReply(
+                "❌ Game của giải đấu không tồn tại, vui lòng kiểm tra lại hệ thống !",
+            );
         }
 
         const t = Date.now();
 
-        const matchData = await AiService.analyzeMatchImage(attachment.url, attachment.contentType, gameConfig);
+        const matchData = await AiService.analyzeMatchImage(
+            attachment.url,
+            attachment.contentType,
+            gameConfig,
+        );
 
-        if (!matchData) return interaction.editReply("❌ AI không thể đọc được ảnh này. Vui lòng chụp rõ nét hơn");
+        if (!matchData)
+            return interaction.editReply(
+                "❌ AI không thể đọc được ảnh này. Vui lòng chụp rõ nét hơn",
+            );
 
-        const teamA = await db.orm.public.Team.where({ tournamentId: activeTournament.id })
-            .where((t) => t.players.some((p) => p.ign.in(matchData.teamAPlayers)))
+        const teamA = await db.orm.public.Team.where({
+            tournamentId: activeTournament.id,
+        })
+            .where((t) =>
+                t.players.some((p) => p.ign.in(matchData.teamAPlayers)),
+            )
             .first();
 
         // Tìm Đội B
-        const teamB = await db.orm.public.Team.where({ tournamentId: activeTournament.id })
-            .where((t) => t.players.some((p) => p.ign.in(matchData.teamBPlayers)))
+        const teamB = await db.orm.public.Team.where({
+            tournamentId: activeTournament.id,
+        })
+            .where((t) =>
+                t.players.some((p) => p.ign.in(matchData.teamBPlayers)),
+            )
             .first();
 
         if (!teamA || !teamB) {
@@ -70,18 +95,22 @@ export default subsl(
         }
 
         if (teamA.id === teamB.id) {
-            return interaction.editReply("❌ Lỗi dữ liệu: AI nhận diện cả hai bên đều thuộc cùng một Đội.");
+            return interaction.editReply(
+                "❌ Lỗi dữ liệu: AI nhận diện cả hai bên đều thuộc cùng một Đội.",
+            );
         }
 
         let winnerId = null;
         if (matchData.teamAScore > matchData.teamBScore) winnerId = teamA.id;
-        else if (matchData.teamBScore > matchData.teamAScore) winnerId = teamB.id;
+        else if (matchData.teamBScore > matchData.teamAScore)
+            winnerId = teamB.id;
 
         await db.transaction(async (tx) => {
             const updateA = db.raw.sql`
     UPDATE "team" SET "totalScore" = "totalScore" + ${matchData.teamAScore}
     WHERE id = ${teamA.id}
   `
+
                 .affectedCount()
                 .build();
 
@@ -112,11 +141,21 @@ export default subsl(
             .setColor("Green")
             .setImage(attachment.url)
             .addFields(
-                { name: `🛡️ ${teamA.name}`, value: `Điểm: **${matchData.teamAScore}**`, inline: true },
+                {
+                    name: `🛡️ ${teamA.name}`,
+                    value: `Điểm: **${matchData.teamAScore}**`,
+                    inline: true,
+                },
                 { name: "VS", value: "⚔️", inline: true },
-                { name: `🛡️ ${teamB.name}`, value: `Điểm: **${matchData.teamBScore}**`, inline: true },
+                {
+                    name: `🛡️ ${teamB.name}`,
+                    value: `Điểm: **${matchData.teamBScore}**`,
+                    inline: true,
+                },
             )
-            .setFooter({ text: "Sử dụng lệnh /leaderboard để xem bảng xếp hạng cập nhật!" });
+            .setFooter({
+                text: "Sử dụng lệnh /leaderboard để xem bảng xếp hạng cập nhật!",
+            });
 
         await interaction.editReply(msg.options);
     },

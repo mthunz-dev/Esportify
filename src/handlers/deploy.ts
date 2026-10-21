@@ -7,18 +7,27 @@ export default async (client: ExtendedClient & Client<true>) => {
         const guildId = Bun.env.GUILD_ID;
 
         if (guildId && isSnowflake(guildId)) {
-            await client.rest.put(Routes.applicationGuildCommands(client.user.id, guildId), {
-                body: client.privateApplicationcommandsArray,
-            });
+            await client.rest.put(
+                Routes.applicationGuildCommands(client.user.id, guildId),
+                {
+                    body: client.privateApplicationcommandsArray,
+                },
+            );
 
-            logger(`Successfully loaded application commands to server ${guildId}.`, "done");
+            logger(
+                `Successfully loaded application commands to server ${guildId}.`,
+                "done",
+            );
         }
 
         await client.rest.put(Routes.applicationCommands(client.user.id), {
             body: client.publicApplicationcommandsArray,
         });
 
-        logger("Successfully loaded application commands globally to Discord API.", "done");
+        logger(
+            "Successfully loaded application commands globally to Discord API.",
+            "done",
+        );
     } catch (error) {
         console.error(error);
         logger(`Unable to load application commands to Discord API`, "err");
