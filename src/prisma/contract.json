@@ -25,6 +25,40 @@
     "namespaces": {
       "public": {
         "enum": {
+          "MatchStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "ONGOING",
+                "value": "ONGOING"
+              },
+              {
+                "name": "COMPLETED",
+                "value": "COMPLETED"
+              }
+            ]
+          },
+          "TeamStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "APPROVED",
+                "value": "APPROVED"
+              },
+              {
+                "name": "REJECTED",
+                "value": "REJECTED"
+              }
+            ]
+          },
           "TournamentStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -61,10 +95,23 @@
                 }
               },
               "proofImage": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "MatchStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
                 }
               },
               "teamAId": {
@@ -177,6 +224,9 @@
                 },
                 "proofImage": {
                   "column": "proofImage"
+                },
+                "status": {
+                  "column": "status"
                 },
                 "teamAId": {
                   "column": "teamAId"
@@ -315,6 +365,19 @@
                   "kind": "scalar"
                 }
               },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "TeamStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "tag": {
                 "nullable": true,
                 "type": {
@@ -418,6 +481,9 @@
                 "name": {
                   "column": "name"
                 },
+                "status": {
+                  "column": "status"
+                },
                 "tag": {
                   "column": "tag"
                 },
@@ -467,6 +533,20 @@
               },
               "name": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "registrationEnd": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "rules": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -542,6 +622,12 @@
                 "name": {
                   "column": "name"
                 },
+                "registrationEnd": {
+                  "column": "registrationEnd"
+                },
+                "rules": {
+                  "column": "rules"
+                },
                 "status": {
                   "column": "status"
                 },
@@ -563,6 +649,13 @@
         "entries": {
           "table": {
             "match": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PENDING', 'ONGOING', 'COMPLETED')",
+                  "name": "match_status_check_11015784",
+                  "prefix": "match_status_check"
+                }
+              ],
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -581,7 +674,22 @@
                 "proofImage": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": false
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PENDING"
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "MatchStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "teamAId": {
                   "codecId": "pg/text@1",
@@ -797,6 +905,13 @@
               "uniques": []
             },
             "team": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PENDING', 'APPROVED', 'REJECTED')",
+                  "name": "team_status_check_56005a61",
+                  "prefix": "team_status_check"
+                }
+              ],
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -816,6 +931,21 @@
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PENDING"
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "TeamStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "tag": {
                   "codecId": "pg/text@1",
@@ -926,6 +1056,16 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "registrationEnd": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "rules": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "status": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -958,6 +1098,22 @@
             }
           },
           "valueSet": {
+            "MatchStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "ONGOING",
+                "COMPLETED"
+              ]
+            },
+            "TeamStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "APPROVED",
+                "REJECTED"
+              ]
+            },
             "TournamentStatus": {
               "kind": "valueSet",
               "values": [
@@ -972,7 +1128,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "4b7ec7f63f6d93fce4eeff59ac86f74c3613fe559fcda6c3772e19f9d5b67eac"
+    "storageHash": "93fc65b9f6ab36bb42e25b87bde1e01b0ad24ffa1f1a5aa7a8b97b724d63fa0a"
   },
   "execution": {
     "executionHash": "e31c0549a1b744538a2de70e8bbf854264e518e3872145f0212f1b45512eb8a4",

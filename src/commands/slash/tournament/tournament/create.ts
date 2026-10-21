@@ -1,5 +1,7 @@
 import subsl from "@/layouts/subsl";
 import { SlashCommandSubcommandBuilder } from "discord.js";
+import { SupportedGames } from "@/modules/games";
+import { FileHelper } from "@/helpers/file.helper";
 
 export default subsl(
     new SlashCommandSubcommandBuilder()
@@ -14,12 +16,27 @@ export default subsl(
                 .setMaxLength(128)
                 .setRequired(true),
         )
-        .addStringOption((o) =>
-            o
-                .setName("game")
+        .addStringOption((o) => {
+            o.setName("game")
                 .setDescription("Game name")
-                .setDescriptionLocalizations({ vi: "Tên tựa game" }) // sau này phát triển thành choices lấy từ danh sách module
-                .setRequired(true),
+                .setDescriptionLocalizations({ vi: "Tên tựa game" })
+                .setRequired(true);
+
+            SupportedGames.forEach((game) => {
+                o.addChoices({
+                    value: game.id,
+                    name: game.displayName,
+                });
+            });
+
+            return o;
+        })
+        .addAttachmentOption((o) =>
+            o
+                .setName("rule_file")
+                .setDescription("Rule of the tournament (.txt format)")
+                .setDescriptionLocalizations({ vi: "Thể lệ của giải đấu (định dạng file .txt)" })
+                .setRequired(false),
         ),
     {
         global: true,
@@ -27,27 +44,42 @@ export default subsl(
     },
     async (client, interaction) => {
         await interaction.deferReply();
+        const { guildId } = interaction;
 
         const name = interaction.options.getString("name", true);
         const game = interaction.options.getString("game", true);
-        const { guildId } = interaction;
+        const ruleFile = interaction.options.getAttachment("rule_file");
 
         const pendingTournament = await client.db.orm.public.Tournament.first({
             guildId,
             status: "ACTIVE",
         });
 
-        if (pendingTournament)
-            throw new Error("Đang có một giải đấu diễn ra trong máy chủ này rồi!");
+        if (pendingTournament) throw new Error("Đang có một giải đấu diễn ra trong máy chủ này rồi!");
+
+        let rules = null;
+
+        if (ruleFile) {
+            if (!ruleFile.name.endsWith(".txt") && !ruleFile.contentType?.includes("text/plain")) {
+                return interaction.editReply("❌ Vui lòng chỉ sử dụng file định dạng `.txt` cho thể lệ!");
+            }
+
+            rules = await FileHelper.readTextFromUrl(ruleFile.url);
+        }
 
         await client.db.orm.public.Tournament.create({
             name,
             game,
+            rules,
             guildId,
         });
 
+        const ruleStatus = rules
+            ? "✅ Đã nạp thành công file thể lệ."
+            : "⚠️ Chưa có thể lệ. Hãy dùng lệnh `/tournament set-rule` sau.";
+
         await interaction.editReply(
-            `✅ Đã khởi tạo thành công giải đấu **${name}** bộ môn **${game.toUpperCase()}**! Các đội có thể bắt đầu nộp kết quả.`,
+            `✅ Đã khởi tạo thành công giải đấu **${name}** bộ môn **${game.toUpperCase()}**!\n${ruleStatus}`,
         );
     },
 );

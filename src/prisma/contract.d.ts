@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'4b7ec7f63f6d93fce4eeff59ac86f74c3613fe559fcda6c3772e19f9d5b67eac'>;
+  StorageHashBase<'93fc65b9f6ab36bb42e25b87bde1e01b0ad24ffa1f1a5aa7a8b97b724d63fa0a'>;
 export type ExecutionHash =
   ExecutionHashBase<'e31c0549a1b744538a2de70e8bbf854264e518e3872145f0212f1b45512eb8a4'>;
 export type ProfileHash =
@@ -237,7 +237,8 @@ export type FieldOutputTypes = {
     readonly Match: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
-      readonly proofImage: CodecTypes['pg/text@1']['output'];
+      readonly proofImage: CodecTypes['pg/text@1']['output'] | null;
+      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
       readonly teamAId: CodecTypes['pg/text@1']['output'];
       readonly teamAScore: CodecTypes['pg/int4@1']['output'];
       readonly teamBId: CodecTypes['pg/text@1']['output'];
@@ -258,6 +259,7 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly status: 'PENDING' | 'APPROVED' | 'REJECTED';
       readonly tag: CodecTypes['pg/text@1']['output'] | null;
       readonly totalScore: CodecTypes['pg/int4@1']['output'];
       readonly tournamentId: CodecTypes['pg/text@1']['output'];
@@ -269,6 +271,8 @@ export type FieldOutputTypes = {
       readonly guildId: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly registrationEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly rules: CodecTypes['pg/text@1']['output'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -279,7 +283,8 @@ export type FieldInputTypes = {
     readonly Match: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
-      readonly proofImage: CodecTypes['pg/text@1']['input'];
+      readonly proofImage: CodecTypes['pg/text@1']['input'] | null;
+      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
       readonly teamAId: CodecTypes['pg/text@1']['input'];
       readonly teamAScore: CodecTypes['pg/int4@1']['input'];
       readonly teamBId: CodecTypes['pg/text@1']['input'];
@@ -300,6 +305,7 @@ export type FieldInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly status: 'PENDING' | 'APPROVED' | 'REJECTED';
       readonly tag: CodecTypes['pg/text@1']['input'] | null;
       readonly totalScore: CodecTypes['pg/int4@1']['input'];
       readonly tournamentId: CodecTypes['pg/text@1']['input'];
@@ -311,6 +317,8 @@ export type FieldInputTypes = {
       readonly guildId: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly registrationEnd: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly rules: CodecTypes['pg/text@1']['input'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -321,7 +329,8 @@ export type StorageColumnTypes = {
     readonly match: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
-      readonly proofImage: CodecTypes['pg/text@1']['output'];
+      readonly proofImage: CodecTypes['pg/text@1']['output'] | null;
+      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
       readonly teamAId: CodecTypes['pg/text@1']['output'];
       readonly teamAScore: CodecTypes['pg/int4@1']['output'];
       readonly teamBId: CodecTypes['pg/text@1']['output'];
@@ -342,6 +351,7 @@ export type StorageColumnTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly status: 'PENDING' | 'APPROVED' | 'REJECTED';
       readonly tag: CodecTypes['pg/text@1']['output'] | null;
       readonly totalScore: CodecTypes['pg/int4@1']['output'];
       readonly tournamentId: CodecTypes['pg/text@1']['output'];
@@ -353,6 +363,8 @@ export type StorageColumnTypes = {
       readonly guildId: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly registrationEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly rules: CodecTypes['pg/text@1']['output'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -363,7 +375,8 @@ export type StorageColumnInputTypes = {
     readonly match: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
-      readonly proofImage: CodecTypes['pg/text@1']['input'];
+      readonly proofImage: CodecTypes['pg/text@1']['input'] | null;
+      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
       readonly teamAId: CodecTypes['pg/text@1']['input'];
       readonly teamAScore: CodecTypes['pg/int4@1']['input'];
       readonly teamBId: CodecTypes['pg/text@1']['input'];
@@ -384,6 +397,7 @@ export type StorageColumnInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly status: 'PENDING' | 'APPROVED' | 'REJECTED';
       readonly tag: CodecTypes['pg/text@1']['input'] | null;
       readonly totalScore: CodecTypes['pg/int4@1']['input'];
       readonly tournamentId: CodecTypes['pg/text@1']['input'];
@@ -395,6 +409,8 @@ export type StorageColumnInputTypes = {
       readonly guildId: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly registrationEnd: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly rules: CodecTypes['pg/text@1']['input'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -405,7 +421,8 @@ export namespace Models {
   export type public_Match = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     id: CodecTypes['pg/text@1']['output'];
-    proofImage: CodecTypes['pg/text@1']['output'];
+    proofImage: CodecTypes['pg/text@1']['output'] | null;
+    status: 'PENDING' | 'ONGOING' | 'COMPLETED';
     teamAId: CodecTypes['pg/text@1']['output'];
     teamAScore: CodecTypes['pg/int4@1']['output'];
     teamBId: CodecTypes['pg/text@1']['output'];
@@ -432,6 +449,7 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     id: CodecTypes['pg/text@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
+    status: 'PENDING' | 'APPROVED' | 'REJECTED';
     tag: CodecTypes['pg/text@1']['output'] | null;
     totalScore: CodecTypes['pg/int4@1']['output'];
     tournamentId: CodecTypes['pg/text@1']['output'];
@@ -448,6 +466,8 @@ export namespace Models {
     guildId: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/text@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
+    registrationEnd: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    rules: CodecTypes['pg/text@1']['output'] | null;
     status: 'ACTIVE' | 'PAUSED' | 'ENDED';
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     matches: public_Match[];
@@ -501,7 +521,17 @@ type ContractBase = Omit<
                 readonly proofImage: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                  };
                   readonly many: false;
                 };
                 readonly teamAId: {
@@ -700,6 +730,16 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                  };
+                  readonly many: false;
+                };
                 readonly tag: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -787,6 +827,18 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly registrationEnd: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly rules: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly status: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -811,6 +863,14 @@ type ContractBase = Omit<
             };
           };
           readonly valueSet: {
+            readonly MatchStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'ONGOING', 'COMPLETED'];
+            };
+            readonly TeamStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'APPROVED', 'REJECTED'];
+            };
             readonly TournamentStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['ACTIVE', 'PAUSED', 'ENDED'];
@@ -852,6 +912,10 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly proofImage: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly status: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -926,6 +990,7 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly id: { readonly column: 'id' };
                 readonly proofImage: { readonly column: 'proofImage' };
+                readonly status: { readonly column: 'status' };
                 readonly teamAId: { readonly column: 'teamAId' };
                 readonly teamAScore: { readonly column: 'teamAScore' };
                 readonly teamBId: { readonly column: 'teamBId' };
@@ -1010,6 +1075,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly tag: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -1084,6 +1153,7 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
+                readonly status: { readonly column: 'status' };
                 readonly tag: { readonly column: 'tag' };
                 readonly totalScore: { readonly column: 'totalScore' };
                 readonly tournamentId: { readonly column: 'tournamentId' };
@@ -1114,6 +1184,17 @@ type ContractBase = Omit<
               };
               readonly name: {
                 readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly registrationEnd: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly rules: {
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly status: {
@@ -1158,6 +1239,8 @@ type ContractBase = Omit<
                 readonly guildId: { readonly column: 'guildId' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
+                readonly registrationEnd: { readonly column: 'registrationEnd' };
+                readonly rules: { readonly column: 'rules' };
                 readonly status: { readonly column: 'status' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
@@ -1165,6 +1248,22 @@ type ContractBase = Omit<
           };
         };
         readonly enum: {
+          readonly MatchStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'ONGOING'; readonly value: 'ONGOING' },
+              { readonly name: 'COMPLETED'; readonly value: 'COMPLETED' },
+            ];
+          };
+          readonly TeamStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'APPROVED'; readonly value: 'APPROVED' },
+              { readonly name: 'REJECTED'; readonly value: 'REJECTED' },
+            ];
+          };
           readonly TournamentStatus: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -1175,6 +1274,16 @@ type ContractBase = Omit<
           };
         };
         readonly enumMemberTypes?: {
+          readonly MatchStatus: readonly [
+            { readonly name: 'PENDING'; readonly value: 'PENDING' },
+            { readonly name: 'ONGOING'; readonly value: 'ONGOING' },
+            { readonly name: 'COMPLETED'; readonly value: 'COMPLETED' },
+          ];
+          readonly TeamStatus: readonly [
+            { readonly name: 'PENDING'; readonly value: 'PENDING' },
+            { readonly name: 'APPROVED'; readonly value: 'APPROVED' },
+            { readonly name: 'REJECTED'; readonly value: 'REJECTED' },
+          ];
           readonly TournamentStatus: readonly [
             { readonly name: 'ACTIVE'; readonly value: 'ACTIVE' },
             { readonly name: 'PAUSED'; readonly value: 'PAUSED' },

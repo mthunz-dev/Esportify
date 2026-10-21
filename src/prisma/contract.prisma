@@ -5,17 +5,31 @@ enum TournamentStatus {
   ENDED
 }
 
-model Tournament {
-  id        String                     @id @default(cuid(2))
-  guildId   String
-  name      String
-  game      String
-  status    TournamentStatus           @default(ACTIVE)
-  createdAt TimestamptzString          @default(now())
-  updatedAt temporal.updatedAtString()
+enum TeamStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
 
-  teams     Team[]
-  matches   Match[]
+enum MatchStatus {
+  PENDING
+  ONGOING
+  COMPLETED
+}
+
+model Tournament {
+  id              String                     @id @default(cuid(2))
+  guildId         String
+  name            String
+  game            String
+  rules           String?
+  registrationEnd TimestamptzString?
+  status          TournamentStatus           @default(ACTIVE)
+  createdAt       TimestamptzString          @default(now())
+  updatedAt       temporal.updatedAtString()
+
+  teams           Team[]
+  matches         Match[]
 
   @@map("tournament")
 }
@@ -25,6 +39,7 @@ model Team {
   name           String
   tag            String?
   totalScore     Int                        @default(0)
+  status         TeamStatus                 @default(PENDING)
   tournamentId   String
   createdAt      TimestamptzString          @default(now())
   updatedAt      temporal.updatedAtString()
@@ -48,8 +63,8 @@ model Match {
   teamBId      String
   teamBScore   Int
   winnerId     String? // winnerId = null => draw
-
-  proofImage   String
+  proofImage   String?
+  status       MatchStatus                @default(PENDING)
   createdAt    TimestamptzString          @default(now())
   updatedAt    temporal.updatedAtString()
 

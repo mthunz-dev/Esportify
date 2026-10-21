@@ -1,5 +1,6 @@
 import MessageBuilder from "@/helpers/MessageBuilder";
 import subsl from "@/layouts/subsl";
+import { getGameConfig } from "@/modules/games";
 import { AiService } from "@/services/ai.service";
 import { SlashCommandSubcommandBuilder } from "discord.js";
 
@@ -41,7 +42,15 @@ export default subsl(
             );
         }
 
-        const matchData = await AiService.analyzeMatchImage(attachment.url, attachment.contentType);
+        const gameConfig = getGameConfig(activeTournament.game);
+
+        if (!gameConfig) {
+            return interaction.editReply("❌ Game của giải đấu không tồn tại, vui lòng kiểm tra lại hệ thống !");
+        }
+
+        const t = Date.now();
+
+        const matchData = await AiService.analyzeMatchImage(attachment.url, attachment.contentType, gameConfig);
 
         if (!matchData) return interaction.editReply("❌ AI không thể đọc được ảnh này. Vui lòng chụp rõ nét hơn");
 
@@ -98,6 +107,7 @@ export default subsl(
         });
 
         const msg = new MessageBuilder()
+            .setContent(`Thời gian phân tích: ${Date.now() - t}ms`)
             .setTitle("🤖 Phân Tích Hoàn Tất & Đã Lưu Database")
             .setColor("Green")
             .setImage(attachment.url)
