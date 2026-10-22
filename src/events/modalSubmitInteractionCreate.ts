@@ -1,3 +1,4 @@
+import { ResponseHelper } from "@/helpers/response";
 import event from "@/layouts/event";
 import {
     ActionRowBuilder,
@@ -22,7 +23,7 @@ export default event(
         if (interaction.customId.startsWith("register.")) {
             const tournamentId = interaction.customId.replace("register.", "");
 
-            await interaction.deferReply({ flags: [64] });
+            await interaction.deferReply();
 
             const teamName = interaction.fields
                 .getTextInputValue("team_name")
@@ -100,18 +101,27 @@ export default event(
             const cacheKey = `reg_${interaction.user.id}_${tournamentId}`;
             const confirmButton = new ButtonBuilder()
                 .setCustomId(`confirm_reg.${cacheKey}`)
-                .setLabel("Đang chờ (10s)...")
-                .setStyle(3)
+                .setEmoji("<a:10s:1562865127064211559>")
+                .setLabel("Đang chờ...")
+                .setStyle(2)
                 .setDisabled(true);
 
             const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
                 confirmButton,
             );
 
-            await interaction.editReply({
-                embeds: [embed],
-                components: [row],
-            });
+            await ResponseHelper.send(
+                {
+                    embeds: [embed],
+                    components: [row],
+                },
+                {
+                    interaction,
+                    components: {
+                        allowedUsers: [interaction.user.id],
+                    },
+                },
+            );
 
             registrationCache.set(cacheKey, {
                 teamName,
@@ -119,18 +129,23 @@ export default event(
                 playersData,
             });
 
-            setTimeout(async () => {
-                confirmButton.setDisabled(false).setLabel("Xác nhận đăng ký");
-                const newRow =
-                    new ActionRowBuilder<ButtonBuilder>().addComponents(
-                        confirmButton,
-                    );
+            // setTimeout(async () => {
+            //     const clickableConfirmButton = new ButtonBuilder()
+            //         .setCustomId(`confirm_reg.${cacheKey}`)
+            //         .setLabel("Xác nhận đăng ký")
+            //         .setStyle(3)
+            //         .setDisabled(false);
 
-                try {
-                    await interaction.editReply({ components: [newRow] });
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                } catch (e) {}
-            }, 10000);
+            //     const newRow =
+            //         new ActionRowBuilder<ButtonBuilder>().addComponents(
+            //             clickableConfirmButton,
+            //         );
+
+            //     try {
+            //         await interaction.editReply({ components: [newRow] });
+            //         // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            //     } catch (e) {}
+            // }, 500);
         }
     },
 );

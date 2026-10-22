@@ -1,16 +1,10 @@
 import errors from "@/data/errors";
-import { error } from "@/helpers/response";
-import {
-    checkPermission,
-    isOnCooldown,
-    type CooldownProps,
-} from "@/helpers/utils";
+import { ResponseHelper } from "@/helpers/response";
+import { Guard } from "@/helpers/guard";
 import event from "@/layouts/event";
 import { prefix as prefixl, subpf as subl } from "@/layouts/command";
 import { time } from "discord.js";
 import ms from "ms";
-
-const cooldown = new Map<string, CooldownProps[]>();
 
 export default event(
     "messageCreate",
@@ -21,7 +15,7 @@ export default event(
         const { config, collection } = client;
         const { prefix, aliases } = collection.commands;
         const { handler } = config;
-        const id = message.author.id;
+        const userId = message.author.id;
 
         if (!handler.commands.prefix) return;
 
@@ -48,29 +42,27 @@ export default event(
         try {
             const { options, subs, aliases } = command;
 
-            if (!checkPermission(message.member, options))
+            if (!Guard.checkPermission(message.member, options))
                 throw errors.USER_MISSING_PERMISSION;
 
-            const sendCooldownWarning = async (availableAt: number) =>
-                await client.helpers.sendMessage(null, {
-                    message: {
-                        content: `\⏰ **|** ${message.member}! Bạn sử dụng lệnh hơi nhanh rồi! Vui lòng đợi **${time(Math.floor(availableAt / 1000), "R")}** để dùng tiếp!`,
+            const sendCooldownWarning = async (expirationTime: number) => {
+                ResponseHelper.send(
+                    `\⏰ **|** ${message.member}! Bạn sử dụng lệnh hơi nhanh rồi! Vui lòng đợi **${time(Math.floor(expirationTime / 1000), "R")}** để dùng tiếp!`,
+                    {
+                        channel: message.channel,
+                        deleteAfter: expirationTime - Date.now(),
                     },
-                    target: { channel: message.channel },
-                    sent: { deleteAfter: availableAt - Date.now() },
-                });
-
-            if (options.cooldown) {
-                const availableAt = isOnCooldown(
-                    client,
-                    cooldown,
-                    id,
-                    command.name,
-                    ms(options.cooldown),
                 );
+            };
 
-                if (availableAt) return await sendCooldownWarning(availableAt);
-            }
+            const expirationTime = Guard.isOnCooldown(
+                userId,
+                command.name,
+                options.cooldown ? ms(options.cooldown) : 0,
+            );
+
+            if (expirationTime)
+                return await sendCooldownWarning(expirationTime);
 
             if (options.sub) {
                 const subInput = args[0].toLowerCase();
@@ -83,18 +75,14 @@ export default event(
                         const { options } = sub;
                         args.shift();
 
-                        if (options.cooldown) {
-                            const availableAt = isOnCooldown(
-                                client,
-                                cooldown,
-                                id,
-                                options.fullName!,
-                                ms(options.cooldown),
-                            );
+                        const expirationTime = Guard.isOnCooldown(
+                            userId,
+                            options.fullName!,
+                            options.cooldown ? ms(options.cooldown) : 0,
+                        );
 
-                            if (availableAt)
-                                return await sendCooldownWarning(availableAt);
-                        }
+                        if (expirationTime)
+                            return await sendCooldownWarning(expirationTime);
 
                         return await sub.handler(client, message, args);
                     }
@@ -103,8 +91,11 @@ export default event(
 
             await command.handler(client, message, args);
         } catch (err: any) {
-            error(err.message, message);
-            if (!(err.code in errors)) console.error(err);
+            ResponseHelper.sendError(err.message, { replyTo: message });
+
+            if (!/[À-Ỹà-ỹĂ-Ỵă-ỵĐđ]/.test(err.message)) {
+                console.error("[Command Handle Error]:", err);
+            }
         }
     },
 );

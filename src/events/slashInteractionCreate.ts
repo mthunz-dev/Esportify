@@ -1,15 +1,9 @@
 import event from "@/layouts/event";
 import { time } from "discord.js";
 import ms from "ms";
-import {
-    checkPermission,
-    isOnCooldown,
-    type CooldownProps,
-} from "@/helpers/utils";
-import { error } from "@/helpers/response";
 import errors from "@/data/errors";
-
-const cooldown = new Map<string, CooldownProps[]>();
+import { ResponseHelper } from "@/helpers/response";
+import { Guard } from "@/helpers/guard";
 
 export default event(
     "interactionCreate",
@@ -21,7 +15,7 @@ export default event(
 
         const { config, collection } = client;
         const { handler } = config;
-        const { id } = interaction.user;
+        const userId = interaction.user.id;
 
         if (
             handler.commands.slash === false &&
@@ -46,30 +40,28 @@ export default event(
         try {
             const { options, subs } = command;
 
-            if (!checkPermission(interaction.member, options))
+            if (!Guard.checkPermission(interaction.member, options))
                 throw errors.USER_MISSING_PERMISSION;
 
-            const sendCooldownWarning = async (availableAt: number) =>
-                await client.helpers.sendMessage(null, {
-                    message: {
-                        content: `\⏰ **|** ${interaction.member}! Bạn sử dụng lệnh hơi nhanh rồi! Vui lòng đợi **${time(Math.floor(availableAt / 1000), "R")}** để dùng tiếp!`,
-                        flags: [64],
-                    },
-                    target: { channel: interaction.channel! },
-                    sent: { deleteAfter: availableAt - Date.now() },
-                });
+            const sendCooldownWarning = async (expirationTime: number) =>
+                await ResponseHelper.send(
+                    `\⏰ **|** ${interaction.member}! Bạn sử dụng lệnh hơi nhanh rồi! Vui lòng đợi **${time(Math.floor(expirationTime / 1000), "R")}** để dùng tiếp!`,
 
-            if (options.cooldown) {
-                const availableAt = isOnCooldown(
-                    client,
-                    cooldown,
-                    id,
-                    command.structure.name,
-                    ms(options.cooldown),
+                    {
+                        channel: interaction.channel!,
+                        deleteAfter: expirationTime - Date.now(),
+                        ephemeral: true,
+                    },
                 );
 
-                if (availableAt) return await sendCooldownWarning(availableAt);
-            }
+            const expirationTime = Guard.isOnCooldown(
+                userId,
+                command.structure.name,
+                options.cooldown ? ms(options.cooldown) : 0,
+            );
+
+            if (expirationTime)
+                return await sendCooldownWarning(expirationTime);
 
             if (options.sub) {
                 const subName = interaction.options.getSubcommand(true);
@@ -81,16 +73,14 @@ export default event(
                     if (options.cooldown) {
                         const fullName = command.structure.name + " " + subName;
 
-                        const availableAt = isOnCooldown(
-                            client,
-                            cooldown,
-                            id,
+                        const expirationTime = Guard.isOnCooldown(
+                            userId,
                             fullName,
-                            ms(options.cooldown),
+                            options.cooldown ? ms(options.cooldown) : 0,
                         );
 
-                        if (availableAt)
-                            return await sendCooldownWarning(availableAt);
+                        if (expirationTime)
+                            return await sendCooldownWarning(expirationTime);
                     }
                     return await sub.handler(client, interaction);
                 }
@@ -98,8 +88,10 @@ export default event(
 
             await command.handler(client, interaction);
         } catch (err: any) {
-            error(err.message, interaction);
-            if (!(err.code in errors)) console.error(err);
+            ResponseHelper.sendError(err.message, { interaction });
+            if (!/[À-Ỹà-ỹĂ-Ỵă-ỵĐđ]/.test(err.message)) {
+                console.error("[Command Handle Error]:", err);
+            }
         }
     },
 );

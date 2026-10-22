@@ -1,4 +1,4 @@
-import MessageBuilder from "@/helpers/MessageBuilder";
+import MessageBuilder from "@/helpers/message-builder";
 import { emojis } from "./emojis";
 
 export const buttonLoading = new MessageBuilder().setComponents([

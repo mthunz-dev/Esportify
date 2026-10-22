@@ -1,8 +1,8 @@
-import logger from "@/helpers/logger";
-import { isEmptyObject, isValidFile } from "@/helpers/validator";
+import logger from "@/utils/logger";
 import { readdirSync } from "fs";
 import { type ClientEvents } from "discord.js";
 import event from "@/layouts/event";
+import { ValidatorUtil } from "@/utils/validator";
 
 export default async (client: ExtendedClient) => {
     const eventNames = client.eventNames() as (keyof ClientEvents)[];
@@ -20,12 +20,12 @@ export default async (client: ExtendedClient) => {
     let count = 0;
 
     for (const file of readdirSync("./src/events/").filter((f: string) =>
-        isValidFile(f, ["ts", "js"]),
+        ValidatorUtil.isValidFile(f, ["ts", "js"]),
     )) {
         const module = (await import(`../events/${file}`))
             .default as ReturnType<typeof event>;
 
-        if (!module || isEmptyObject(module)) {
+        if (!module || ValidatorUtil.isEmptyObject(module)) {
             logger(`Module not found at ${file}`, "warn");
             continue;
         }

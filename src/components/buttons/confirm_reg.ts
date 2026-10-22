@@ -1,4 +1,5 @@
 import { registrationCache } from "@/events/modalSubmitInteractionCreate";
+import { ResponseHelper } from "@/helpers/response";
 import { button } from "@/layouts/component";
 import {
     ActionRowBuilder,
@@ -9,27 +10,32 @@ import {
 
 export default button(
     "confirm_reg",
-    {
-        everyone: true,
-    },
+    { everyone: false },
     async (client, interaction) => {
-        const cacheKey = interaction.customId.replace("confirm_reg", "");
+        const cacheKey = interaction.customId.replace("confirm_reg.", "");
+
         const data = registrationCache.get(cacheKey);
+
         const { db } = client;
 
-        if (!data) {
-            return interaction.followUp({
-                content:
-                    "❌ Phiên đăng ký đã hết hạn hoặc bị lỗi. Vui lòng gõ `/register` làm lại.",
-                flags: [64],
-            });
-        }
+        if (!data)
+            throw new Error(
+                "❌ Phiên đăng ký đã hết hạn hoặc bị lỗi. Vui lòng gõ `/register` làm lại.",
+            );
 
         try {
             let newTeamId = "";
 
             await db.transaction(async (tx) => {
-                // 1. Tạo Team
+                const existingTeam = await tx.orm.public.Team.first({
+                    name: data.teamName as string,
+                });
+
+                if (existingTeam)
+                    throw Error(
+                        `Tên đội **${data.teamName}** đã có người đăng ký. Vui lòng chọn tên khác!`,
+                    );
+
                 const newTeam = await tx.orm.public.Team.create({
                     name: data.teamName,
                     tournamentId: data.tournamentId,
@@ -50,17 +56,10 @@ export default button(
                 await tx.execute(plan);
             });
 
-            const successEmbed = new EmbedBuilder()
-                .setTitle("✅ Gửi đơn đăng ký thành công")
-                .setColor("Green")
-                .setDescription(
-                    `Đội **${data.teamName}** đã được gửi lên BTC. Vui lòng đợi kết quả xét duyệt.`,
-                );
-
-            await interaction.editReply({
-                embeds: [successEmbed],
-                components: [],
-            });
+            await ResponseHelper.sendSuccess(
+                `Đội **${data.teamName}** đã được gửi lên BTC. Vui lòng đợi kết quả xét duyệt.`,
+                { interaction },
+            );
 
             const adminChannel = interaction.client.channels.cache.get(
                 "1562389938496864327",
@@ -102,13 +101,15 @@ export default button(
                 components: [adminRow],
             });
             registrationCache.delete(cacheKey);
-        } catch (error) {
-            console.error(error);
-            await interaction.editReply({
-                content:
-                    "❌ Có lỗi xảy ra khi lưu vào Database (Có thể tên đội đã tồn tại).",
-                components: [],
-            });
+        } catch (err) {
+            if (err instanceof Error) {
+                ResponseHelper.sendError(err.message, { interaction });
+                if (!/[À-Ỹà-ỹĂ-Ỵă-ỵĐđ]/.test(err.message)) {
+                    console.error("[Command Handle Error]:", err);
+                }
+            }
+
+            return false;
         }
     },
 );

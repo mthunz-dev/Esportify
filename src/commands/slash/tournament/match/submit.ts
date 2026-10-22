@@ -1,4 +1,4 @@
-import MessageBuilder from "@/helpers/MessageBuilder";
+import MessageBuilder from "@/helpers/message-builder";
 import { subsl } from "@/layouts/command";
 import { getGameConfig } from "@/modules/games";
 import { AiService } from "@/services/ai.service";
@@ -157,6 +157,6 @@ export default subsl(
                 text: "Sử dụng lệnh /leaderboard để xem bảng xếp hạng cập nhật!",
             });
 
-        await interaction.editReply(msg.options);
+        await interaction.editReply(msg.build());
     },
 );

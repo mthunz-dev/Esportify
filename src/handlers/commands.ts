@@ -1,9 +1,9 @@
 // import config from "@/config";
-import { isEmptyObject, isValidFile } from "@/helpers/validator";
-import logger from "@/helpers/logger";
+import logger from "@/utils/logger";
 import { readdirSync, existsSync } from "fs";
 import { prefix as prefixl, subpf, slash as slashl } from "@/layouts/command";
 import { subsl } from "@/layouts/command";
+import { ValidatorUtil } from "@/utils/validator";
 import path from "path";
 
 export default async (client: ExtendedClient) => {
@@ -18,13 +18,13 @@ export default async (client: ExtendedClient) => {
         for (const category of readdirSync(typeDir)) {
             const categoryDir = `${typeDir}/${category}`;
             for (const file of readdirSync(categoryDir).filter((f) =>
-                isValidFile(f, ["ts", "js"]),
+                ValidatorUtil.isValidFile(f, ["ts", "js"]),
             )) {
                 const module = (await import(`${categoryDir}/${file}`))
                     .default as
                     ReturnType<typeof prefixl> | ReturnType<typeof slashl>;
 
-                if (!module || isEmptyObject(module)) continue;
+                if (!module || ValidatorUtil.isEmptyObject(module)) continue;
                 // logger(`Module not found at ${file}`, "warn");
 
                 if (module.options.ignore) {
@@ -67,12 +67,15 @@ export default async (client: ExtendedClient) => {
                             for (const subfile of readdirSync(
                                 subCommandDir,
                             ).filter((f: string) =>
-                                isValidFile(f, ["ts", "js"]),
+                                ValidatorUtil.isValidFile(f, ["ts", "js"]),
                             )) {
                                 const submodule = (
                                     await import(`${subCommandDir}/${subfile}`)
                                 ).default as ReturnType<typeof subpf>;
-                                if (!submodule || isEmptyObject(submodule))
+                                if (
+                                    !submodule ||
+                                    ValidatorUtil.isEmptyObject(submodule)
+                                )
                                     continue;
 
                                 if (module.options.ignore) {
@@ -113,12 +116,15 @@ export default async (client: ExtendedClient) => {
                             for (const subfile of readdirSync(
                                 subCommandDir,
                             ).filter((f: string) =>
-                                isValidFile(f, ["ts", "js"]),
+                                ValidatorUtil.isValidFile(f, ["ts", "js"]),
                             )) {
                                 const submodule = (
                                     await import(`${subCommandDir}/${subfile}`)
                                 ).default as ReturnType<typeof subsl>;
-                                if (!submodule || isEmptyObject(submodule))
+                                if (
+                                    !submodule ||
+                                    ValidatorUtil.isEmptyObject(submodule)
+                                )
                                     continue;
 
                                 if (module.options.ignore) {

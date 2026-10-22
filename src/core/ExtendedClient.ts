@@ -7,7 +7,6 @@ import events from "@/handlers/events";
 import type { prefix, slash } from "@/layouts/command";
 // import type modal from "@/layouts/modal";
 import type { button, select } from "@/layouts/component";
-import { sendMessage } from "@/helpers/response";
 import errors from "@/data/errors";
 
 import {
@@ -20,7 +19,7 @@ import {
     type SlashCommandSubcommandsOnlyBuilder,
 } from "discord.js";
 import deploy from "@/handlers/deploy";
-import logger from "@/helpers/logger";
+import logger from "@/utils/logger";
 
 if (config.handler.preconnect)
     (async () => {
@@ -47,10 +46,6 @@ export default class ExtendedClient extends Client<true> {
             selects: new Collection<string, ReturnType<typeof select>>(),
             // modals: new Collection<string, ReturnType<typeof modal>>(),
         },
-    };
-
-    public helpers = {
-        sendMessage: sendMessage(this),
     };
 
     public publicApplicationcommandsArray: (

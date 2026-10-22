@@ -28,7 +28,7 @@ export type ComponentData =
     | LinkButtonComponentData;
 
 export interface MessageOptions {
-    content?: string | undefined;
+    content?: string;
     embeds?: EmbedBuilder[];
     components?: ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>[];
     allowedMentions?: MessageMentionOptions;
@@ -37,12 +37,13 @@ export interface MessageOptions {
 }
 
 export default class MessageBuilder {
-    public index: number;
-    public options: MessageOptions;
+    private index: number;
+    private options: MessageOptions;
 
     constructor() {
         this.index = -1;
         this.options = {
+            content: undefined,
             allowedMentions: { repliedUser: false, parse: ["users"] },
         };
     }
@@ -252,6 +253,10 @@ export default class MessageBuilder {
         else this.options.flags = undefined;
 
         return this;
+    }
+
+    public build() {
+        return this.options;
     }
 
     public toJSON() {

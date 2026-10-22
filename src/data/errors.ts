@@ -6,6 +6,7 @@ export default {
     USER_MISSING_BANNER: "Người dùng không có banner !",
     USER_MISSING_PERMISSION: "Bạn không có đủ quyền để thực hiện điều này !",
     INVALID_USER: "Người dùng không hợp lệ !",
+    USER_NO_INTERACTION_PERMISSON: "Bạn ko có quyền sử dụng tương tác này !",
 
     // Server & Channel Errors
     INVALID_GUILD: "Server không tồn tại !",
@@ -21,5 +22,6 @@ export default {
     INVALID_INTERACTION: "Bạn không có quyền sử dụng tương tác này !",
     INVALID_COLOR: "Mã màu không hợp lệ",
     TIMED_OUT: "Đã hết thời gian !",
+
     UNKNOWN: "Lỗi không xác định !",
 } as const;

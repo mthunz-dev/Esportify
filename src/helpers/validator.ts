@@ -31,7 +31,3 @@ export const isValidURL = (str: string) => {
     );
     return !!pattern.test(str);
 };
-
-export const isValidFile = (fileName: string, extensions: string[]) => {
-    return extensions.some((ext) => fileName.endsWith(`.${ext}`));
-};

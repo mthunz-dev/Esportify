@@ -1,194 +1,258 @@
-import { type MessageOptions } from "@/helpers/MessageBuilder";
 import {
+    CommandInteraction,
+    MessageComponentInteraction,
+    ModalSubmitInteraction,
     EmbedBuilder,
     Message,
-    type GuildBasedChannel,
+    type TextBasedChannel,
     type Interaction,
+    ActionRowBuilder,
 } from "discord.js";
-import { disableComponents } from "./utils";
-import type User from "@/classes/User";
-import config from "@/config";
+import { EmbedHelper } from "./embed.ts";
+import MessageBuilder, { type MessageOptions } from "./message-builder.ts";
+import ms from "ms";
 import _ from "lodash";
 import { buttonLoading } from "@/data/constant";
 
-export const error = async (
-    err: string,
-    meta: Message<boolean> | Interaction<"cached">,
-) => {
-    const message = {
-        embeds: [
-            new EmbedBuilder()
-                .setColor("Red")
-                .setDescription(`${config.emojis.cross} ${err}`),
-        ],
-    };
-
-    if (meta.inGuild()) {
-        let msg: Message<true>;
-
-        if (meta instanceof Message) {
-            try {
-                msg = await meta.reply(message);
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (err) {
-                msg = await meta.channel.send(message);
-            }
-
-            if (msg)
-                setTimeout(async () => {
-                    await msg.delete().catch(() => {});
-                }, 30000);
-        } else if (meta.isRepliable()) {
-            try {
-                await meta.followUp({ ...message, flags: ["Ephemeral"] });
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (err) {
-                await meta.reply(message);
-            }
-        }
-    }
-    return false;
-};
+type AnyInteraction =
+    | CommandInteraction<"cached">
+    | MessageComponentInteraction<"cached">
+    | ModalSubmitInteraction<"cached">;
 
 export interface ComponentOptions {
-    allowedIds?: string[];
+    allowedUsers: string[];
     time?: number;
+    onCollect?: (
+        interaction: MessageComponentInteraction,
+    ) => Promise<void> | void;
+
+    additionArgs?: any[];
+
+    onEnd?: (reason: string) => Promise<void> | void;
 }
 
-export interface sentOptions {
+interface SendOptions {
+    channel?: TextBasedChannel;
+    replyTo?: Message;
+    interaction?: AnyInteraction;
+    components?: ComponentOptions;
     deleteAfter?: number;
+    ephemeral?: boolean;
 }
 
-export interface targetOptions {
-    message?: Message<true>;
-    channel?: GuildBasedChannel;
-    interaction?: Interaction<"cached">;
-}
+export class ResponseHelper {
+    static async disableComponent(message: Message) {
+        try {
+            message = await message.fetch();
 
-export const sendMessage =
-    (client: ExtendedClient) =>
-    async (
-        user: User | null,
-        options: {
-            message: MessageOptions;
-            target: targetOptions;
-            sent?: sentOptions;
-            component?: ComponentOptions;
-        },
-        ...additionArgs: any
-    ) => {
-        const { message, channel, interaction } = options.target;
+            if (!message.editable) return;
 
-        let sentMessage: Message<true> | null = null;
+            const disabledRows = message.components.map((row) => {
+                const actionRow = ActionRowBuilder.from(row as any);
+                actionRow.components.forEach((comp: any) =>
+                    comp.setDisabled(true),
+                );
 
-        if (message) sentMessage = await message.reply({ ...options.message });
-        else if (channel?.isSendable())
-            sentMessage = await channel.send(options.message);
-        else if (interaction?.isRepliable())
-            sentMessage = await interaction.editReply(options.message);
+                return actionRow;
+            });
 
-        if (!sentMessage) return;
+            const grayEmbeds = message.embeds.map((embed) => {
+                return EmbedBuilder.from(embed).setColor("Grey");
+            });
 
-        if (options.sent) {
-            const { deleteAfter } = options.sent;
+            await message.edit({
+                embeds: grayEmbeds,
+                components: disabledRows as any,
+            });
+        } catch (error) {
+            console.error(
+                "[ResponseHelper] Error while disable component",
+                error,
+            );
+        }
+    }
 
-            if (deleteAfter)
-                setTimeout(() => {
-                    sentMessage.delete().catch(() => {});
-                }, deleteAfter);
+    static async send(
+        payload: string | MessageBuilder | EmbedBuilder | MessageOptions,
+        options: SendOptions,
+    ) {
+        const {
+            channel,
+            replyTo,
+            interaction,
+            deleteAfter,
+            ephemeral,
+            components,
+        } = options;
+
+        if (!channel && !replyTo && !interaction)
+            throw new Error("[ResponseHelper] Nothing to send or reply");
+
+        let messageOptions: MessageOptions = {};
+
+        if (payload instanceof MessageBuilder) messageOptions = payload.build();
+        else if (payload instanceof EmbedBuilder)
+            messageOptions = { embeds: [payload] };
+        else if (typeof payload === "string")
+            messageOptions = { content: payload };
+        else messageOptions = payload;
+
+        if (ephemeral) messageOptions.flags = [64];
+
+        let sentMessage: Message | null = null;
+
+        if (interaction) {
+            if (interaction.replied || interaction.deferred) {
+                sentMessage = (await interaction.followUp(
+                    messageOptions,
+                )) as Message;
+            } else {
+                const response = await interaction.reply({
+                    ...messageOptions,
+                    withResponse: true,
+                });
+                sentMessage =
+                    response instanceof Message
+                        ? response
+                        : await interaction.fetchReply();
+            }
+        } else if (replyTo?.channel.isSendable()) {
+            sentMessage = await replyTo.reply(messageOptions);
+        } else if (channel?.isSendable()) {
+            sentMessage = await channel.send(messageOptions);
         }
 
-        if (options.component && user) {
-            const { allowedIds, time } = options.component;
+        if (!sentMessage)
+            throw new Error("[ResponseHelper] Unable to send message");
 
-            const filter = async (interaction: Interaction<"cached">) => {
-                if (!allowedIds?.includes(interaction.user.id)) {
-                    if ("update" in interaction) {
-                        await interaction.deferUpdate();
-                        return error(
-                            "Bạn ko có quyền sử dụng tương tác này !",
-                            interaction,
+        if (components) {
+            const filter = async (interaction: Interaction) => {
+                if (!components.allowedUsers.includes(interaction.user.id)) {
+                    if (!(interaction instanceof CommandInteraction)) {
+                        await this.defer(interaction as AnyInteraction, true);
+
+                        await this.send(
+                            EmbedHelper.error(
+                                "Bạn không có quyền dùng tương tác này !",
+                            ),
+                            { interaction: interaction as AnyInteraction },
                         );
-                    } else return false;
+                    }
+
+                    return false;
                 } else return true;
             };
 
             const collector = sentMessage.createMessageComponentCollector({
                 filter,
-                time,
-            });
-
-            collector.on("end", async () => {
-                await disableComponents(sentMessage);
+                time: components.time || ms("60m"),
             });
 
             collector.on("collect", async (interaction) => {
-                const oldMessage = _.cloneDeep(interaction.message);
+                if (components.onCollect) {
+                    await components.onCollect(interaction);
+                } else if (interaction.inCachedGuild())
+                    await this.handleRoutedComponent(
+                        interaction,
+                        components.additionArgs,
+                    );
+            });
 
-                try {
-                    if (!interaction.customId.endsWith("manual"))
-                        await interaction.update(buttonLoading.options);
-
-                    const { components } = client.collection;
-                    const [componentId] = interaction.customId.split(".");
-                    const oldComponents = oldMessage.components;
-
-                    let result = false;
-
-                    if (interaction.isButton()) {
-                        const buttonComponent =
-                            components.buttons.get(componentId);
-
-                        if (buttonComponent)
-                            result = await buttonComponent.handler(
-                                client,
-                                user,
-                                interaction,
-                                oldComponents,
-                                ...additionArgs,
-                            );
-                    } else if (interaction.isStringSelectMenu()) {
-                        const value = interaction.values[0];
-                        const menuComponent =
-                            components.selects.get(value) ||
-                            components.selects.get(componentId);
-
-                        if (menuComponent)
-                            result = await menuComponent.handler(
-                                client,
-                                user,
-                                interaction,
-                                oldComponents,
-                                ...additionArgs,
-                            );
-                    }
-
-                    if (!result) {
-                        await interaction.message.edit({
-                            ..._.pick(oldMessage, [
-                                "content",
-                                "embeds",
-                                "components",
-                            ]),
-                        });
-                    }
-                } catch (err: any) {
-                    await interaction.message.edit({
-                        ..._.pick(oldMessage, [
-                            "content",
-                            "embeds",
-                            "components",
-                        ]),
-                    });
-
-                    if (err instanceof Error) {
-                        error(err.message, interaction);
-                        if (!/[À-Ỹà-ỹĂ-Ỵă-ỵĐđ]/.test(err.message))
-                            console.error(err);
-                    }
+            collector.on("end", async (_, reason) => {
+                if (components.onEnd) {
+                    await components.onEnd(reason);
                 }
+
+                await this.disableComponent(sentMessage);
             });
         }
 
-        return sentMessage;
-    };
+        if (deleteAfter) {
+            setTimeout(() => {
+                if (sentMessage.deletable) sentMessage.delete().catch(() => {});
+            }, deleteAfter);
+        }
+    }
+
+    private static async handleRoutedComponent(
+        interaction: MessageComponentInteraction<"cached">,
+        additionArgs: any[] = [],
+    ) {
+        const client = interaction.client as ExtendedClient;
+        const oldMessage = _.cloneDeep(interaction.message);
+        const oldComponents = oldMessage.components;
+
+        try {
+            if (!interaction.customId.endsWith("manual")) {
+                await interaction.update(buttonLoading.build());
+            }
+
+            const { components } = client.collection;
+            const [componentId] = interaction.customId.split(".");
+            let result = false;
+
+            if (interaction.isButton()) {
+                const buttonComponent = components.buttons.get(componentId);
+                if (buttonComponent) {
+                    result = await buttonComponent.handler(
+                        client,
+                        interaction,
+                        oldComponents,
+                        ...additionArgs,
+                    );
+                }
+            } else if (interaction.isStringSelectMenu()) {
+                const value = interaction.values[0];
+                const menuComponent =
+                    components.selects.get(value) ||
+                    components.selects.get(componentId);
+                if (menuComponent) {
+                    result = await menuComponent.handler(
+                        client,
+                        interaction,
+                        oldComponents,
+                        ...additionArgs,
+                    );
+                }
+            }
+
+            if (!result) {
+                await interaction.message.edit({
+                    ..._.pick(oldMessage, ["content", "embeds", "components"]),
+                });
+            }
+        } catch (err: any) {
+            await interaction.message.edit({
+                ..._.pick(oldMessage, ["content", "embeds", "components"]),
+            });
+
+            if (err instanceof Error) {
+                await this.sendError(err.message, { interaction });
+
+                if (!/[À-Ỹà-ỹĂ-Ỵă-ỵĐđ]/.test(err.message)) {
+                    console.error("[Component Router Error]:", err);
+                }
+            }
+        }
+    }
+
+    static async sendSuccess(message: string, options: SendOptions) {
+        const embed = EmbedHelper.success(message);
+        return this.send(embed, options);
+    }
+
+    static async sendError(message: string, options: SendOptions) {
+        const embed = EmbedHelper.error(message);
+        return this.send(embed, options);
+    }
+
+    static async defer(
+        interaction: AnyInteraction,
+        isEphemeral: boolean = false,
+    ) {
+        if (!interaction.deferred && !interaction.replied) {
+            const options = isEphemeral ? { flags: [64] } : {};
+            await interaction.deferReply(options);
+        }
+    }
+}

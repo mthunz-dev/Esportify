@@ -1,7 +1,7 @@
 import { subsl } from "@/layouts/command";
 import { SlashCommandSubcommandBuilder } from "discord.js";
 import { SupportedGames } from "@/modules/games";
-import { FileHelper } from "@/helpers/file.helper";
+import { FileHelper } from "@/helpers/file";
 
 export default subsl(
     new SlashCommandSubcommandBuilder()

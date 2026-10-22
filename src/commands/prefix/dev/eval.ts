@@ -1,9 +1,9 @@
-import { error } from "@/helpers/response";
-import { myms } from "@/helpers/utils";
+import { ResponseHelper } from "@/helpers/response";
 import { prefix } from "@/layouts/command";
 import { EmbedBuilder } from "discord.js";
 import { inspect } from "node:util";
 import { Category } from "@/types/enum";
+import ms from "ms";
 
 export default prefix(
     "eval",
@@ -18,7 +18,9 @@ export default prefix(
         const _ = await import("lodash");
 
         if (args.length === 0)
-            return await error("Please type code to run.", message);
+            return await ResponseHelper.sendError("Please type code to run.", {
+                replyTo: message,
+            });
 
         const start = Date.now();
 
@@ -79,10 +81,9 @@ export default prefix(
             console.error(error);
         }
 
-        client.helpers.sendMessage(null, {
-            message: { embeds: [embed] },
-            sent: { deleteAfter: Number(myms("1m")) },
-            target: { channel: message.channel },
+        await ResponseHelper.send(embed, {
+            deleteAfter: ms("1m"),
+            channel: message.channel,
         });
     },
 );

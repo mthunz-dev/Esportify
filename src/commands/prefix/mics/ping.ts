@@ -1,4 +1,4 @@
-import MessageBuilder from "@/helpers/MessageBuilder";
+import MessageBuilder from "@/helpers/message-builder";
 import { prefix } from "@/layouts/command";
 import { Category } from "@/types/enum";
 
@@ -17,7 +17,6 @@ export default prefix(
         const apiLatency = client.ws.ping;
 
         const ping = new MessageBuilder()
-            .addEmbeds()
             .setDescription(
                 [
                     `> **\`Bot\`**: \`${botLatency}ms\``,
@@ -26,6 +25,6 @@ export default prefix(
             )
             .setColor(botLatency < 400 ? "Green" : "Red");
 
-        await msg.edit({ content: null, ...ping.options });
+        await msg.edit(ping.build());
     },
 );

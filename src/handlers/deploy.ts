@@ -1,4 +1,4 @@
-import logger from "@/helpers/logger";
+import logger from "@/utils/logger";
 import { isSnowflake } from "@/helpers/validator";
 import { Routes, type Client } from "discord.js";
 

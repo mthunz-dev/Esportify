@@ -1,4 +1,4 @@
-import { FileHelper } from "@/helpers/file.helper";
+import { FileHelper } from "@/helpers/file";
 import { subsl } from "@/layouts/command";
 import { SlashCommandSubcommandBuilder } from "discord.js";
 

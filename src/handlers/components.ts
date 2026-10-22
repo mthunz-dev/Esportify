@@ -1,4 +1,4 @@
-import logger from "@/helpers/logger";
+import logger from "@/utils/logger";
 import { isEmptyObject } from "@/helpers/validator";
 import { readdirSync } from "fs";
 

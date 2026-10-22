@@ -1,6 +1,7 @@
 import { buttonLoading } from "@/data/constant";
-import { error } from "@/helpers/response";
-import { checkPermission } from "@/helpers/utils";
+import { Guard } from "@/helpers/guard";
+import { ResponseHelper } from "@/helpers/response";
+
 import event from "@/layouts/event";
 import _ from "lodash";
 
@@ -24,11 +25,16 @@ export default event(
                 const component = buttons.get(customId);
 
                 if (component?.options.everyone) {
-                    if (!checkPermission(interaction.member, component.options))
+                    if (
+                        !Guard.checkPermission(
+                            interaction.member,
+                            component.options,
+                        )
+                    )
                         throw client.errors.INVALID_INTERACTION;
 
                     if (!interaction.customId.endsWith("manual"))
-                        await interaction.update(buttonLoading.options);
+                        await interaction.update(buttonLoading.build());
 
                     result = await component.handler(
                         client,
@@ -40,11 +46,16 @@ export default event(
                 const component = selects.get(customId);
 
                 if (component?.options.everyone) {
-                    if (!checkPermission(interaction.member, component.options))
+                    if (
+                        !Guard.checkPermission(
+                            interaction.member,
+                            component.options,
+                        )
+                    )
                         throw client.errors.INVALID_INTERACTION;
 
                     if (!interaction.customId.endsWith("manual"))
-                        await interaction.update(buttonLoading.options);
+                        await interaction.update(buttonLoading.build());
 
                     result = await component.handler(
                         client,
@@ -61,8 +72,10 @@ export default event(
             }
         } catch (err: any) {
             if (err instanceof Error) {
-                error(err.message, interaction);
-                if (!/[À-Ỹà-ỹĂ-Ỵă-ỵĐđ]/.test(err.message)) console.error(err);
+                ResponseHelper.sendError(err.message, { interaction });
+                if (!/[À-Ỹà-ỹĂ-Ỵă-ỵĐđ]/.test(err.message)) {
+                    console.error("[Command Handle Error]:", err);
+                }
             }
         }
     },
