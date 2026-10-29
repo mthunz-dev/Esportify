@@ -4,6 +4,7 @@ import { EmbedBuilder } from "discord.js";
 import { inspect } from "node:util";
 import { Category } from "@/types/enum";
 import ms from "ms";
+import { AiService } from "@/services/ai.service";
 
 export default prefix(
     "eval",
@@ -16,6 +17,7 @@ export default prefix(
     async (client, message, args) => {
         const embed = new EmbedBuilder();
         const _ = await import("lodash");
+        const { AiService } = await import("@/services/ai.service");
 
         if (args.length === 0)
             return await ResponseHelper.sendError("Please type code to run.", {

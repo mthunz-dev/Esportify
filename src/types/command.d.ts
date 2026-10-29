@@ -1,4 +1,4 @@
-import type { PermissionResolvable } from "discord.js";
+import type { AutocompleteInteraction, PermissionResolvable } from "discord.js";
 import type { Category } from "./enum";
 
 export interface SlashOptions {
@@ -11,6 +11,10 @@ export interface SlashOptions {
     global: boolean;
     cooldown?: string;
     sub?: boolean;
+    autocomple?: (
+        client: ExtendedClient,
+        interaction: AutocompleteInteraction,
+    ) => Promise<any>;
 }
 
 export interface BasePrefixOptions {

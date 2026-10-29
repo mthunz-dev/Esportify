@@ -1,12 +1,5 @@
 import { subsl } from "@/layouts/command";
-import {
-    LabelBuilder,
-    ModalBuilder,
-    SlashCommandSubcommandBuilder,
-    TextDisplayBuilder,
-    TextInputBuilder,
-    UserSelectMenuBuilder,
-} from "discord.js";
+import { SlashCommandSubcommandBuilder } from "discord.js";
 
 export default subsl(
     new SlashCommandSubcommandBuilder()

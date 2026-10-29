@@ -2,7 +2,7 @@ import logger from "@/utils/logger";
 import { isEmptyObject } from "@/helpers/validator";
 import { readdirSync } from "fs";
 
-const ComponentsType = ["selects", "buttons"];
+const componentTypes = ["selects", "buttons"];
 
 export default async (client: ExtendedClient) => {
     for (const type of readdirSync(`./src/components/`)) {
@@ -22,16 +22,16 @@ export default async (client: ExtendedClient) => {
                 continue;
             }
 
-            if (!ComponentsType.includes(type)) {
+            if (!componentTypes.includes(type)) {
                 logger(
-                    `Invalid folder name, it must be ${ComponentsType.join("/")}`,
+                    `Invalid folder name, it must be ${componentTypes.join("/")}`,
                     "err",
                 );
                 continue;
             }
 
             client.collection.components[type as "buttons" | "selects"].set(
-                module?.customId || module?.commandName,
+                module?.customId,
                 module,
             );
         }

@@ -1,11 +1,14 @@
 import {
     ActionRowBuilder,
+    Attachment,
+    AttachmentBuilder,
     ButtonBuilder,
     ButtonStyle,
     ComponentType,
     EmbedBuilder,
     StringSelectMenuBuilder,
     type APIEmbedField,
+    type AttachmentPayload,
     type ColorResolvable,
     type EmbedAuthorOptions,
     type EmbedFooterOptions,
@@ -32,7 +35,7 @@ export interface MessageOptions {
     embeds?: EmbedBuilder[];
     components?: ActionRowBuilder<ButtonBuilder | StringSelectMenuBuilder>[];
     allowedMentions?: MessageMentionOptions;
-    files?: File[];
+    files?: (Attachment | AttachmentBuilder | AttachmentPayload)[];
     flags?: any;
 }
 
@@ -231,14 +234,18 @@ export default class MessageBuilder {
         return this;
     }
 
-    public addFiles(...files: File[]) {
+    public addFiles(
+        ...files: (Attachment | AttachmentBuilder | AttachmentPayload)[]
+    ): MessageBuilder {
         this.options.files = [];
-        this.options.files.push(...files);
+        this.options.files.push(...files!);
 
         return this;
     }
 
-    public setFiles(...files: File[]) {
+    public setFiles(
+        ...files: (Attachment | AttachmentBuilder | AttachmentPayload)[]
+    ) {
         this.options.files = files;
         return this;
     }
@@ -248,7 +255,7 @@ export default class MessageBuilder {
         return this;
     }
 
-    public setHiden(hide: boolean) {
+    public setEphemeral(hide: boolean) {
         if (hide) this.options.flags = ["Ephemeral"];
         else this.options.flags = undefined;
 

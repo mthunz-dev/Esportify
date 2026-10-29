@@ -21,7 +21,7 @@ export const button = (
         client: ExtendedClient,
         interaction: ButtonInteraction<"cached">,
         components: TopLevelComponent[],
-        ...additionArgs: any
+        ...additionArgs: any[]
     ) => Promise<any>,
 ) => ({ customId, options, handler });
 
@@ -32,6 +32,6 @@ export const select = (
         client: ExtendedClient,
         interaction: AnySelectMenuInteraction<"cached">,
         components: TopLevelComponent[],
-        ...additionArgs: any
+        ...additionArgs: any[]
     ) => Promise<any>,
 ) => ({ customId, options, handler });

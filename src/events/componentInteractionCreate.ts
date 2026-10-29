@@ -65,7 +65,7 @@ export default event(
                 } else return;
             }
 
-            if (!result) {
+            if (result == false) {
                 await interaction.message.edit({
                     ..._.pick(oldMessage, ["content", "embeds", "components"]),
                 });

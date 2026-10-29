@@ -41,6 +41,7 @@ interface SendOptions {
 }
 
 export class ResponseHelper {
+    //thêm interaction và sử dụng editReply để chỉnh sửa tin nhắn
     static async disableComponent(message: Message) {
         try {
             message = await message.fetch();
@@ -216,7 +217,7 @@ export class ResponseHelper {
                 }
             }
 
-            if (!result) {
+            if (result == false) {
                 await interaction.message.edit({
                     ..._.pick(oldMessage, ["content", "embeds", "components"]),
                 });
@@ -242,6 +243,8 @@ export class ResponseHelper {
     }
 
     static async sendError(message: string, options: SendOptions) {
+        options.ephemeral ??= true;
+
         const embed = EmbedHelper.error(message);
         return this.send(embed, options);
     }

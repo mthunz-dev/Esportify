@@ -1,13 +1,22 @@
+import MessageBuilder from "@/helpers/message-builder";
 import { ResponseHelper } from "@/helpers/response";
 import event from "@/layouts/event";
-import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    EmbedBuilder,
-    Events,
-} from "discord.js";
+import { Events } from "discord.js";
 
-export const registrationCache = new Map<string, any>();
+interface PlayerData {
+    discordId: string;
+    ign: string;
+    username: string;
+}
+
+export const registrationCache = new Map<
+    string,
+    {
+        teamName: string;
+        tournamentId: string;
+        playersData: PlayerData[];
+    }
+>();
 
 export default event(
     Events.InteractionCreate,
@@ -20,10 +29,13 @@ export default event(
         if (!interaction.isModalSubmit()) return;
 
         // register modal
-        if (interaction.customId.startsWith("register.")) {
-            const tournamentId = interaction.customId.replace("register.", "");
+        if (interaction.customId.startsWith("register_tournament.")) {
+            const tournamentId = interaction.customId.replace(
+                "register_tournament.",
+                "",
+            );
 
-            await interaction.deferReply();
+            await ResponseHelper.defer(interaction, true);
 
             const teamName = interaction.fields
                 .getTextInputValue("team_name")
@@ -36,17 +48,14 @@ export default event(
             const lines = rawPlayersText
                 .split("\n")
                 .filter((line) => line.trim() !== "");
-            const playersData: {
-                discordId: string;
-                ign: string;
-                username: string;
-            }[] = [];
+            const playersData: PlayerData[] = [];
 
             for (let i = 0; i < lines.length; i++) {
                 const parts = lines[i].split("|");
                 if (parts.length !== 2) {
-                    return interaction.editReply(
-                        `❌ Dòng ${i + 1} sai cú pháp. Phải là: \`username | ingame\`.`,
+                    return ResponseHelper.sendError(
+                        `Thông tin thành viên thứ ${i + 1} chưa đúng cú pháp. Bạn kiểm tra lại nhé !`,
+                        { interaction, ephemeral: true },
                     );
                 }
 
@@ -58,8 +67,9 @@ export default event(
                 );
 
                 if (!member) {
-                    return interaction.editReply(
-                        `❌ Không tìm thấy người dùng \`${usernameInput}\` trong máy chủ này. Hãy đảm bảo họ đã tham gia máy chủ và gõ đúng username!`,
+                    return await ResponseHelper.sendError(
+                        `Không tìm thấy người dùng \`${usernameInput}\` trong máy chủ. Hãy đảm bảo họ đã tham gia máy chủ này và gõ đúng username`,
+                        { interaction, ephemeral: true },
                     );
                 }
 
@@ -74,54 +84,65 @@ export default event(
             const existingPlayers = await client.db.orm.public.Player.where(
                 (p) => p.discordId.in(discordIdsToCheck),
             )
-                .where((p) => p.team.some({ tournamentId }))
                 .include("team")
+                .where((p) => p.team.some({ tournamentId }))
                 .all();
 
             if (existingPlayers.length > 0) {
                 const conflictInfo = existingPlayers
-                    .map((ep) => `<@${ep.discordId}> (Team: ${ep.team.name})`)
+                    .map(
+                        (ep) =>
+                            `- <@${ep.discordId}> - Team: **${ep.team.name}**`,
+                    )
                     .join("\n");
-                return interaction.editReply(
-                    `❌ Đăng ký thất bại! Các thành viên sau đã thuộc một đội khác trong giải này:\n${conflictInfo}`,
+
+                return await ResponseHelper.sendError(
+                    `Đăng ký thất bại! Các thành viên sau đã thuộc một đội khác trong giải này:\n${conflictInfo}`,
+                    { interaction, ephemeral: true },
                 );
             }
-            let summaryText = "";
+            let playerList = "";
             playersData.forEach((p, idx) => {
-                summaryText += `${idx + 1}. <@${p.discordId}> - IGN: **${p.ign}**\n`;
+                playerList += `ㅤㅤ ${idx + 1}. <@${p.discordId}> - **${p.ign}**\n`;
             });
 
-            const embed = new EmbedBuilder()
-                .setTitle(`Kiểm tra lại thông tin đội: ${teamName}`)
-                .setColor("Orange")
-                .setDescription(
-                    `Vui lòng kiểm tra kỹ danh sách dưới đây. Nút xác nhận sẽ mở sau **10 giây**.\n\n${summaryText}`,
-                );
-
             const cacheKey = `reg_${interaction.user.id}_${tournamentId}`;
-            const confirmButton = new ButtonBuilder()
-                .setCustomId(`confirm_reg.${cacheKey}`)
-                .setEmoji("<a:10s:1562865127064211559>")
-                .setLabel("Đang chờ...")
-                .setStyle(2)
-                .setDisabled(true);
 
-            const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-                confirmButton,
-            );
-
-            await ResponseHelper.send(
-                {
-                    embeds: [embed],
-                    components: [row],
-                },
-                {
-                    interaction,
-                    components: {
-                        allowedUsers: [interaction.user.id],
+            const message = new MessageBuilder()
+                .setAuthor({
+                    name: "Đăng ký tham gia giải đấu",
+                    iconURL:
+                        "https://cdn-icons-png.flaticon.com/128/10336/10336114.png",
+                })
+                .setColor("Blue")
+                .setFields({
+                    name: `ℹ️ Thông tin đội đăng ký`,
+                    value: [
+                        `- **\`Tên đội\`**: ${teamName}`,
+                        `- **\`Thành viên đội\`**:`,
+                        playerList,
+                    ].join("\n"),
+                })
+                .addComponents([
+                    {
+                        type: 2,
+                        customId: `confirm_reg.${cacheKey}`,
+                        style: 3,
+                        label: "Xác nhận đăng ký",
+                        disabled: false,
                     },
-                },
-            );
+                ])
+                .setFooter({
+                    iconURL: client.user.displayAvatarURL(),
+                    text: client.user.displayName,
+                })
+                .setTimestamp()
+                .addEmbeds()
+                .setColor("Blue")
+                .setDescription(
+                    `Vui lòng kiểm tra kĩ thông tin trước khi xác nhận đăng ký`,
+                )
+                .setEphemeral(true);
 
             registrationCache.set(cacheKey, {
                 teamName,
@@ -129,23 +150,12 @@ export default event(
                 playersData,
             });
 
-            // setTimeout(async () => {
-            //     const clickableConfirmButton = new ButtonBuilder()
-            //         .setCustomId(`confirm_reg.${cacheKey}`)
-            //         .setLabel("Xác nhận đăng ký")
-            //         .setStyle(3)
-            //         .setDisabled(false);
-
-            //     const newRow =
-            //         new ActionRowBuilder<ButtonBuilder>().addComponents(
-            //             clickableConfirmButton,
-            //         );
-
-            //     try {
-            //         await interaction.editReply({ components: [newRow] });
-            //         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            //     } catch (e) {}
-            // }, 500);
+            await ResponseHelper.send(message, {
+                interaction,
+                components: {
+                    allowedUsers: [interaction.user.id],
+                },
+            });
         }
     },
 );

@@ -46,6 +46,12 @@ export default class ExtendedClient extends Client<true> {
             selects: new Collection<string, ReturnType<typeof select>>(),
             // modals: new Collection<string, ReturnType<typeof modal>>(),
         },
+
+        interactions: {
+            modals: new Collection(),
+            autocompletes: new Collection(),
+
+        },
     };
 
     public publicApplicationcommandsArray: (
