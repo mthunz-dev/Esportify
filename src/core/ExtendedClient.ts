@@ -5,7 +5,7 @@ import components from "@/handlers/components";
 import schedule from "@/handlers/schedule";
 import events from "@/handlers/events";
 import type { prefix, slash } from "@/layouts/command";
-// import type modal from "@/layouts/modal";
+import type { modal } from "@/layouts/interaction";
 import type { button, select } from "@/layouts/component";
 import errors from "@/data/errors";
 
@@ -44,13 +44,10 @@ export default class ExtendedClient extends Client<true> {
         components: {
             buttons: new Collection<string, ReturnType<typeof button>>(),
             selects: new Collection<string, ReturnType<typeof select>>(),
-            // modals: new Collection<string, ReturnType<typeof modal>>(),
         },
 
         interactions: {
-            modals: new Collection(),
-            autocompletes: new Collection(),
-
+            modals: new Collection<string, ReturnType<typeof modal>>(),
         },
     };
 

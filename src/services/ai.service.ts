@@ -1,7 +1,6 @@
 import Groq from "groq-sdk";
 import { type GameConfig } from "@/modules/games/GameConfig";
-// const VISION_MODEL = "llama-3.1-8b-instant";
-const TEXT_MODEL = "qwen/qwen3.8-27b";
+const GROQ_MODEL = "qwen/qwen3.8-27b";
 
 const groq = new Groq();
 
@@ -22,64 +21,37 @@ export class AiService {
             const buffer = Buffer.from(arrayBuffer);
             const base64Image = buffer.toString("base64");
 
-            // Ép API trả về JSON bằng cách chèn cấu trúc thẳng vào prompt
             const jsonSchemaPrompt = `
-Bạn BẮT BUỘC trả về kết quả bằng chuẩn JSON theo cấu trúc sau, không kèm bất kỳ giải thích nào khác:
+Bạn BẮT BUỘC trả về kết quả bằng chuẩn JSON theo cấu trúc sau:
 {
-  "teamAScore": <number>,
-  "teamBScore": <number>,
-  "teamAPlayers": [<string array>],
-  "teamBPlayers": [<string array>]
+  "teamAScore": <number - Điểm số hoặc số round thắng của đội A>,
+  "teamBScore": <number - Điểm số hoặc số round thắng của đội B>,
+  "teamAPlayers": [<string array - Danh sách tên ingame (IGN) của người chơi team A>],
+  "teamBPlayers": [<string array - Danh sách tên ingame (IGN) của người chơi team B>]
 }`;
             const finalPrompt = `Bạn là trọng tài eSports cấp cao.\n${gameConfig.aiPrompt}\n${jsonSchemaPrompt}`;
 
-            // Lưu ý: Thay đổi slug model dưới đây theo đúng ID model trên OpenRouter
-            // Ví dụ: "nvidia/nemotron-3.5-super-vl"
-            const OPENROUTER_MODEL_ID = "nvidia/nemotron-3.5-super-vl";
-
-            const response = await fetch(
-                "https://openrouter.ai/api/v1/chat/completions",
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-                        "Content-Type": "application/json",
-                        // OpenRouter khuyến nghị thêm 2 header này để nhận diện ứng dụng (không bắt buộc)
-                        "HTTP-Referer": "https://your-domain.com",
-                        "X-Title": "Discord Esports Bot",
-                    },
-                    body: JSON.stringify({
-                        model: OPENROUTER_MODEL_ID,
-                        messages: [
+            const response = await groq.chat.completions.create({
+                model: GROQ_MODEL,
+                messages: [
+                    {
+                        role: "user",
+                        content: [
+                            { type: "text", text: finalPrompt },
                             {
-                                role: "user",
-                                content: [
-                                    { type: "text", text: finalPrompt },
-                                    {
-                                        type: "image_url",
-                                        image_url: {
-                                            url: `data:${mimeType};base64,${base64Image}`,
-                                        },
-                                    },
-                                ],
+                                type: "image_url",
+                                image_url: {
+                                    url: `data:${mimeType};base64,${base64Image}`,
+                                },
                             },
                         ],
-                        response_format: { type: "json_object" },
-                        temperature: 0.1,
-                    }),
-                },
-            );
+                    },
+                ],
+                response_format: { type: "json_object" },
+                temperature: 0.1,
+            });
 
-            if (!response.ok) {
-                const errText = await response.text();
-                throw new Error(
-                    `OpenRouter API Error: ${response.status} - ${errText}`,
-                );
-            }
-
-            const data = await response.json();
-            const content = data.choices?.[0]?.message?.content;
-
+            const content = response.choices[0]?.message?.content;
             if (!content) throw new Error("API không trả về nội dung");
 
             return JSON.parse(content) as {
@@ -89,7 +61,7 @@ Bạn BẮT BUỘC trả về kết quả bằng chuẩn JSON theo cấu trúc s
                 teamBPlayers: string[];
             };
         } catch (error) {
-            console.error("Lỗi AI Service (Analyze Image OpenRouter):", error);
+            console.error("Lỗi AI Service (Analyze Image):", error);
             return null;
         }
     }
@@ -120,7 +92,7 @@ Bạn BẮT BUỘC trả về chuẩn JSON theo định dạng sau:
             const prompt = `Hãy kiểm duyệt:\n- Tên đội: "${teamName}"\n- Các tuyển thủ: [${players.join(", ")}].\n${jsonSchemaPrompt}`;
 
             const response = await groq.chat.completions.create({
-                model: TEXT_MODEL,
+                model: GROQ_MODEL,
                 messages: [
                     {
                         role: "system",
@@ -160,7 +132,7 @@ Bạn BẮT BUỘC trả về chuẩn JSON theo định dạng sau:
         Yêu cầu: Ngắn gọn, súc tích, thân thiện và chính xác. Tuyệt đối không bịa đặt thông tin nếu trong thể lệ không ghi. Nếu không biết, hãy khuyên họ liên hệ BTC.`;
 
             const response = await groq.chat.completions.create({
-                model: TEXT_MODEL,
+                model: GROQ_MODEL,
                 messages: [
                     { role: "system", content: systemInstruction },
                     { role: "user", content: question },

@@ -4,6 +4,10 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "MatchRound": {
+      "model": "MatchRound",
+      "namespace": "public"
+    },
     "match": {
       "model": "Match",
       "namespace": "public"
@@ -94,10 +98,17 @@
                   "kind": "scalar"
                 }
               },
-              "proofImage": {
+              "roundCount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "startTime": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/text@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -122,7 +133,7 @@
                 }
               },
               "teamAScore": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -136,7 +147,7 @@
                 }
               },
               "teamBScore": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -165,6 +176,21 @@
               }
             },
             "relations": {
+              "rounds": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "matchId"
+                  ]
+                },
+                "to": {
+                  "model": "MatchRound",
+                  "namespace": "public"
+                }
+              },
               "teamA": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -222,8 +248,11 @@
                 "id": {
                   "column": "id"
                 },
-                "proofImage": {
-                  "column": "proofImage"
+                "roundCount": {
+                  "column": "roundCount"
+                },
+                "startTime": {
+                  "column": "startTime"
                 },
                 "status": {
                   "column": "status"
@@ -252,6 +281,84 @@
               },
               "namespaceId": "public",
               "table": "match"
+            }
+          },
+          "MatchRound": {
+            "fields": {
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "matchId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "screenshoot": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "teamAPoint": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "teamBPoint": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "match": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "matchId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Match",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "id": {
+                  "column": "id"
+                },
+                "matchId": {
+                  "column": "matchId"
+                },
+                "screenshoot": {
+                  "column": "screenshoot"
+                },
+                "teamAPoint": {
+                  "column": "teamAPoint"
+                },
+                "teamBPoint": {
+                  "column": "teamBPoint"
+                }
+              },
+              "namespaceId": "public",
+              "table": "MatchRound"
             }
           },
           "Player": {
@@ -658,6 +765,77 @@
       "public": {
         "entries": {
           "table": {
+            "MatchRound": {
+              "columns": {
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "matchId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "screenshoot": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "teamAPoint": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "teamBPoint": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "MatchRound_matchId_idx_4caf5ecc"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "matchId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "MatchRound"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "match"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "matchId"
+                  ],
+                  "name": "MatchRound_matchId_idx_4caf5ecc",
+                  "prefix": "MatchRound_matchId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "match": {
               "checks": [
                 {
@@ -681,9 +859,18 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
-                "proofImage": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
+                "roundCount": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nullable": false
+                },
+                "startTime": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "nullable": true
                 },
                 "status": {
@@ -709,7 +896,7 @@
                 "teamAScore": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "teamBId": {
                   "codecId": "pg/text@1",
@@ -719,7 +906,7 @@
                 "teamBScore": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "tournamentId": {
                   "codecId": "pg/text@1",
@@ -1143,7 +1330,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9bf62582c2a6234d9326613081ab61bca63af52c2fbc0bf49c0dfa19cee3b8fb"
+    "storageHash": "d655ddefa9fafe97fce10738755df6b7712672fc4378ae353bb11846a6fe348a"
   },
   "execution": {
     "executionHash": "e31c0549a1b744538a2de70e8bbf854264e518e3872145f0212f1b45512eb8a4",

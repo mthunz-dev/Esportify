@@ -23,6 +23,7 @@ export default subsl(
     {
         global: true,
         ownerOnly: true,
+        ignore: true,
     },
     async (client, interaction) => {
         const { db } = client;
@@ -40,7 +41,7 @@ export default subsl(
             );
 
         const activeTournament = await db.orm.public.Tournament.first({
-            guildId: interaction.guildId!,
+            guildId: interaction.guildId,
             status: "ACTIVE",
         });
 
@@ -58,7 +59,7 @@ export default subsl(
             );
         }
 
-        const t = Date.now();
+        // const t = Date.now();
 
         const matchData = await AiService.analyzeMatchImage(
             attachment.url,
@@ -132,11 +133,10 @@ export default subsl(
             teamAScore: matchData.teamAScore,
             teamBScore: matchData.teamBScore,
             winnerId: winnerId,
-            proofImage: attachment.url,
         });
 
         const msg = new MessageBuilder()
-            .setContent(`Thời gian phân tích: ${Date.now() - t}ms`)
+            // .setContent(`Thời gian phân tích: ${Date.now() - t}ms`)
             .setTitle("🤖 Phân Tích Hoàn Tất & Đã Lưu Database")
             .setColor("Green")
             .setImage(attachment.url)
@@ -154,8 +154,10 @@ export default subsl(
                 },
             )
             .setFooter({
-                text: "Sử dụng lệnh /leaderboard để xem bảng xếp hạng cập nhật!",
-            });
+                iconURL: client.user.displayAvatarURL(),
+                text: client.user.displayName,
+            })
+            .setTimestamp();
 
         await interaction.editReply(msg.build());
     },

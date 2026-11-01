@@ -15,9 +15,9 @@ export class Guard {
     static isOnCooldown(
         userId: string,
         commandName: string,
-        cooldownSeconds: number,
+        cooldownMs: number,
     ) {
-        if (!cooldownSeconds) return 0;
+        if (!cooldownMs) return 0;
         if (this.isAdmin(userId)) return 0;
 
         if (!cooldowns.has(commandName))
@@ -25,7 +25,6 @@ export class Guard {
 
         const timestamps = cooldowns.get(commandName)!;
         const now = Date.now();
-        const cooldownMs = cooldownSeconds * 1000;
 
         if (timestamps.has(userId)) {
             const expirationTime = timestamps.get(userId)! + cooldownMs;

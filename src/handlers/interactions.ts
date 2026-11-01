@@ -2,7 +2,7 @@ import logger from "@/utils/logger";
 import { isEmptyObject } from "@/helpers/validator";
 import { readdirSync } from "fs";
 
-const interactionTypes = ["modals", "autocompletes"];
+const interactionTypes = ["modals"];
 
 export default async (client: ExtendedClient) => {
     for (const type of readdirSync(`./src/interactions/`)) {
@@ -30,7 +30,7 @@ export default async (client: ExtendedClient) => {
                 continue;
             }
 
-            client.collection.interactions[type as "modals" | "autocompletes"].set(
+            client.collection.interactions[type as "modals"].set(
                 module?.customId || module?.commandName,
                 module,
             );

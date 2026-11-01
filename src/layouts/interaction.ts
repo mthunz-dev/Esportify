@@ -9,7 +9,7 @@ export interface InteractionOptions {
     ownerOnly?: boolean;
 }
 
-export default (
+export const modal = (
     customId: string,
     options: InteractionOptions,
     handler: (

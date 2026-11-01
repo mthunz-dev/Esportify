@@ -6,6 +6,7 @@ import {
     type SlashCommandOptionsOnlyBuilder,
     type SlashCommandSubcommandsOnlyBuilder,
     SlashCommandSubcommandBuilder,
+    AutocompleteInteraction,
 } from "discord.js";
 import type {
     PrefixOptions,
@@ -53,11 +54,16 @@ export const slash = (
         client: ExtendedClient,
         interaction: ChatInputCommandInteraction<"cached">,
     ) => Promise<any>,
+    autocomple?: (
+        client: ExtendedClient,
+        interaction: AutocompleteInteraction,
+    ) => Promise<any>,
 ) => ({
     structure,
     options,
     handler,
     subs: new Collection<string, ReturnType<typeof subsl>>(),
+    autocomple,
 });
 
 export const subsl = (
@@ -67,10 +73,15 @@ export const subsl = (
         client: ExtendedClient,
         interaction: ChatInputCommandInteraction<"cached">,
     ) => Promise<any>,
+    autocomple?: (
+        client: ExtendedClient,
+        interaction: AutocompleteInteraction,
+    ) => Promise<any>,
 ) => ({
     structure,
     options,
     handler,
+    autocomple,
 });
 
 export default subpf;

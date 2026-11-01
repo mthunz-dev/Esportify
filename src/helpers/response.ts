@@ -24,7 +24,7 @@ export interface ComponentOptions {
     time?: number;
     onCollect?: (
         interaction: MessageComponentInteraction,
-    ) => Promise<void> | void;
+    ) => Promise<any> | any;
 
     additionArgs?: any[];
 
@@ -44,11 +44,11 @@ export class ResponseHelper {
     //thêm interaction và sử dụng editReply để chỉnh sửa tin nhắn
     static async disableComponent(message: Message) {
         try {
-            message = await message.fetch();
+            const fetchedMessage = await message.fetch().catch(() => null);
 
-            if (!message.editable) return;
+            if (!fetchedMessage?.editable) return;
 
-            const disabledRows = message.components.map((row) => {
+            const disabledRows = fetchedMessage.components.map((row) => {
                 const actionRow = ActionRowBuilder.from(row as any);
                 actionRow.components.forEach((comp: any) =>
                     comp.setDisabled(true),
@@ -57,11 +57,11 @@ export class ResponseHelper {
                 return actionRow;
             });
 
-            const grayEmbeds = message.embeds.map((embed) => {
+            const grayEmbeds = fetchedMessage.embeds.map((embed) => {
                 return EmbedBuilder.from(embed).setColor("Grey");
             });
 
-            await message.edit({
+            await fetchedMessage.edit({
                 embeds: grayEmbeds,
                 components: disabledRows as any,
             });
@@ -146,7 +146,7 @@ export class ResponseHelper {
 
             const collector = sentMessage.createMessageComponentCollector({
                 filter,
-                time: components.time || ms("60m"),
+                time: components.time || ms("2m"),
             });
 
             collector.on("collect", async (interaction) => {
