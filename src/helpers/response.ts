@@ -173,6 +173,8 @@ export class ResponseHelper {
                 if (sentMessage.deletable) sentMessage.delete().catch(() => {});
             }, deleteAfter);
         }
+
+        return sentMessage;
     }
 
     private static async handleRoutedComponent(

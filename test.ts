@@ -1,9 +1,10 @@
-import { GoogleGenAI } from "@google/genai";
+// import { isSquare } from "@/utils/common";
+// import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({});
+// const ai = new GoogleGenAI({});
 
-(async () => {
-    const listModels = await ai.models.list();
+// (async () => {
+//     // const listModels = await ai.models.list();
 
-    console.log(listModels.page.map((p) => p.name));
-})();
+//     console.log(isSquare(16));
+// })();

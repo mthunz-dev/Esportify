@@ -4,8 +4,8 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
-    "MatchRound": {
-      "model": "MatchRound",
+    "group": {
+      "model": "Group",
       "namespace": "public"
     },
     "match": {
@@ -14,6 +14,10 @@
     },
     "player": {
       "model": "Player",
+      "namespace": "public"
+    },
+    "round": {
+      "model": "Round",
       "namespace": "public"
     },
     "team": {
@@ -46,6 +50,23 @@
               }
             ]
           },
+          "MatchType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "GROUP_MATCH",
+                "value": "GROUP_MATCH"
+              },
+              {
+                "name": "KNOCKOUT_MATCH",
+                "value": "KNOCKOUT_MATCH"
+              },
+              {
+                "name": "FINAL",
+                "value": "FINAL"
+              }
+            ]
+          },
           "TeamStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -60,6 +81,19 @@
               {
                 "name": "REJECTED",
                 "value": "REJECTED"
+              }
+            ]
+          },
+          "TournamentFormat": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "SINGLE_ELIMINATION",
+                "value": "SINGLE_ELIMINATION"
+              },
+              {
+                "name": "GROUP_STAGE",
+                "value": "GROUP_STAGE"
               }
             ]
           },
@@ -82,7 +116,7 @@
           }
         },
         "models": {
-          "Match": {
+          "Group": {
             "fields": {
               "createdAt": {
                 "nullable": false,
@@ -98,58 +132,10 @@
                   "kind": "scalar"
                 }
               },
-              "roundCount": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "startTime": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "status": {
+              "name": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "MatchStatus",
-                  "namespaceId": "public",
-                  "plane": "domain"
-                }
-              },
-              "teamAId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "teamAScore": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "teamBId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "teamBScore": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
@@ -166,56 +152,32 @@
                   "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
-              },
-              "winnerId": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
               }
             },
             "relations": {
-              "rounds": {
+              "matches": {
                 "cardinality": "1:N",
                 "on": {
                   "localFields": [
                     "id"
                   ],
                   "targetFields": [
-                    "matchId"
+                    "groupId"
                   ]
                 },
                 "to": {
-                  "model": "MatchRound",
+                  "model": "Match",
                   "namespace": "public"
                 }
               },
-              "teamA": {
-                "cardinality": "N:1",
-                "nullable": false,
+              "teams": {
+                "cardinality": "1:N",
                 "on": {
                   "localFields": [
-                    "teamAId"
+                    "id"
                   ],
                   "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Team",
-                  "namespace": "public"
-                }
-              },
-              "teamB": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "teamBId"
-                  ],
-                  "targetFields": [
-                    "id"
+                    "groupId"
                   ]
                 },
                 "to": {
@@ -248,8 +210,278 @@
                 "id": {
                   "column": "id"
                 },
-                "roundCount": {
-                  "column": "roundCount"
+                "name": {
+                  "column": "name"
+                },
+                "tournamentId": {
+                  "column": "tournamentId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "group"
+            }
+          },
+          "Match": {
+            "fields": {
+              "bestOf": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "groupId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "nextMatchId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "startTime": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "MatchStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "teamAId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "teamAScore": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "teamBId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "teamBScore": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "tournamentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "MatchType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "winnerId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "group": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "groupId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Group",
+                  "namespace": "public"
+                }
+              },
+              "nextMatch": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "nextMatchId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Match",
+                  "namespace": "public"
+                }
+              },
+              "prevMatches": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "nextMatchId"
+                  ]
+                },
+                "to": {
+                  "model": "Match",
+                  "namespace": "public"
+                }
+              },
+              "rounds": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "matchId"
+                  ]
+                },
+                "to": {
+                  "model": "Round",
+                  "namespace": "public"
+                }
+              },
+              "teamA": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "teamAId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Team",
+                  "namespace": "public"
+                }
+              },
+              "teamB": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "teamBId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Team",
+                  "namespace": "public"
+                }
+              },
+              "tournament": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tournamentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tournament",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "bestOf": {
+                  "column": "bestOf"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "groupId": {
+                  "column": "groupId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "nextMatchId": {
+                  "column": "nextMatchId"
                 },
                 "startTime": {
                   "column": "startTime"
@@ -272,6 +504,9 @@
                 "tournamentId": {
                   "column": "tournamentId"
                 },
+                "type": {
+                  "column": "type"
+                },
                 "updatedAt": {
                   "column": "updatedAt"
                 },
@@ -281,84 +516,6 @@
               },
               "namespaceId": "public",
               "table": "match"
-            }
-          },
-          "MatchRound": {
-            "fields": {
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "matchId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "screenshoot": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "teamAPoint": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "teamBPoint": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "match": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "matchId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Match",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "id": {
-                  "column": "id"
-                },
-                "matchId": {
-                  "column": "matchId"
-                },
-                "screenshoot": {
-                  "column": "screenshoot"
-                },
-                "teamAPoint": {
-                  "column": "teamAPoint"
-                },
-                "teamBPoint": {
-                  "column": "teamBPoint"
-                }
-              },
-              "namespaceId": "public",
-              "table": "MatchRound"
             }
           },
           "Player": {
@@ -391,6 +548,13 @@
                   "kind": "scalar"
                 }
               },
+              "isCaptain": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "teamId": {
                 "nullable": false,
                 "type": {
@@ -407,6 +571,21 @@
               }
             },
             "relations": {
+              "roundsMvp": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "mvpId"
+                  ]
+                },
+                "to": {
+                  "model": "Round",
+                  "namespace": "public"
+                }
+              },
               "team": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -438,6 +617,9 @@
                 "ign": {
                   "column": "ign"
                 },
+                "isCaptain": {
+                  "column": "isCaptain"
+                },
                 "teamId": {
                   "column": "teamId"
                 },
@@ -449,12 +631,196 @@
               "table": "player"
             }
           },
+          "Round": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "duration": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "matchId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "mvpId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "roundIndex": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "screenshoot": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "teamAPoint": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "teamBPoint": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "winnerId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "match": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "matchId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Match",
+                  "namespace": "public"
+                }
+              },
+              "mvp": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "mvpId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Player",
+                  "namespace": "public"
+                }
+              },
+              "winner": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "winnerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Team",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "duration": {
+                  "column": "duration"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "matchId": {
+                  "column": "matchId"
+                },
+                "mvpId": {
+                  "column": "mvpId"
+                },
+                "roundIndex": {
+                  "column": "roundIndex"
+                },
+                "screenshoot": {
+                  "column": "screenshoot"
+                },
+                "teamAPoint": {
+                  "column": "teamAPoint"
+                },
+                "teamBPoint": {
+                  "column": "teamBPoint"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "winnerId": {
+                  "column": "winnerId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "round"
+            }
+          },
           "Team": {
             "fields": {
               "createdAt": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "groupId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "groupPoints": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
@@ -492,13 +858,6 @@
                   "kind": "scalar"
                 }
               },
-              "totalScore": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
               "tournamentId": {
                 "nullable": false,
                 "type": {
@@ -515,6 +874,22 @@
               }
             },
             "relations": {
+              "group": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "groupId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Group",
+                  "namespace": "public"
+                }
+              },
               "matchesAsTeamA": {
                 "cardinality": "1:N",
                 "on": {
@@ -560,6 +935,21 @@
                   "namespace": "public"
                 }
               },
+              "roundsWon": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "winnerId"
+                  ]
+                },
+                "to": {
+                  "model": "Round",
+                  "namespace": "public"
+                }
+              },
               "tournament": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -582,6 +972,12 @@
                 "createdAt": {
                   "column": "createdAt"
                 },
+                "groupId": {
+                  "column": "groupId"
+                },
+                "groupPoints": {
+                  "column": "groupPoints"
+                },
                 "id": {
                   "column": "id"
                 },
@@ -593,9 +989,6 @@
                 },
                 "tag": {
                   "column": "tag"
-                },
-                "totalScore": {
-                  "column": "totalScore"
                 },
                 "tournamentId": {
                   "column": "tournamentId"
@@ -610,6 +1003,13 @@
           },
           "Tournament": {
             "fields": {
+              "advancePerGroup": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -617,10 +1017,30 @@
                   "kind": "scalar"
                 }
               },
+              "format": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "TournamentFormat",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "game": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "groupCount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
@@ -688,6 +1108,21 @@
               }
             },
             "relations": {
+              "groups": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tournamentId"
+                  ]
+                },
+                "to": {
+                  "model": "Group",
+                  "namespace": "public"
+                }
+              },
               "matches": {
                 "cardinality": "1:N",
                 "on": {
@@ -721,11 +1156,20 @@
             },
             "storage": {
               "fields": {
+                "advancePerGroup": {
+                  "column": "advancePerGroup"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
+                "format": {
+                  "column": "format"
+                },
                 "game": {
                   "column": "game"
+                },
+                "groupCount": {
+                  "column": "groupCount"
                 },
                 "guildId": {
                   "column": "guildId"
@@ -765,67 +1209,63 @@
       "public": {
         "entries": {
           "table": {
-            "MatchRound": {
+            "group": {
               "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
                 "id": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nullable": false
-                },
-                "matchId": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
                 },
-                "screenshoot": {
+                "name": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
                 },
-                "teamAPoint": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
+                "tournamentId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
-                "teamBPoint": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
                   "index": {
-                    "name": "MatchRound_matchId_idx_4caf5ecc"
+                    "name": "group_tournamentId_idx_d0bd97a6"
                   },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
-                      "matchId"
+                      "tournamentId"
                     ],
                     "namespaceId": "public",
-                    "tableName": "MatchRound"
+                    "tableName": "group"
                   },
                   "target": {
                     "columns": [
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "match"
+                    "tableName": "tournament"
                   }
                 }
               ],
               "indexes": [
                 {
                   "columns": [
-                    "matchId"
+                    "tournamentId"
                   ],
-                  "name": "MatchRound_matchId_idx_4caf5ecc",
-                  "prefix": "MatchRound_matchId_idx",
+                  "name": "group_tournamentId_idx_d0bd97a6",
+                  "prefix": "group_tournamentId_idx",
                   "unique": false
                 }
               ],
@@ -842,31 +1282,47 @@
                   "expression": "\"status\" IN ('PENDING', 'ONGOING', 'COMPLETED')",
                   "name": "match_status_check_11015784",
                   "prefix": "match_status_check"
+                },
+                {
+                  "expression": "\"type\" IN ('GROUP_MATCH', 'KNOCKOUT_MATCH', 'FINAL')",
+                  "name": "match_type_check_b0d48954",
+                  "prefix": "match_type_check"
                 }
               ],
               "columns": {
+                "bestOf": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 3
+                  },
+                  "nullable": false
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
                   "nullable": false
+                },
+                "groupId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
                 },
                 "id": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
                 },
-                "roundCount": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "default": {
-                    "kind": "literal",
-                    "value": 1
-                  },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
                   "nullable": false
+                },
+                "nextMatchId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
                 },
                 "startTime": {
                   "codecId": "pg/timestamptz-string@1",
@@ -891,7 +1347,7 @@
                 "teamAId": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "teamAScore": {
                   "codecId": "pg/int4@1",
@@ -901,7 +1357,7 @@
                 "teamBId": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "teamBScore": {
                   "codecId": "pg/int4@1",
@@ -912,6 +1368,17 @@
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "MatchType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -943,6 +1410,25 @@
                     ],
                     "namespaceId": "public",
                     "tableName": "tournament"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "match_groupId_idx_e2fb5578"
+                  },
+                  "source": {
+                    "columns": [
+                      "groupId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "match"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "group"
                   }
                 },
                 {
@@ -982,9 +1468,44 @@
                     "namespaceId": "public",
                     "tableName": "team"
                   }
+                },
+                {
+                  "index": {
+                    "name": "match_nextMatchId_idx_89cdf626"
+                  },
+                  "source": {
+                    "columns": [
+                      "nextMatchId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "match"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "match"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "groupId"
+                  ],
+                  "name": "match_groupId_idx_e2fb5578",
+                  "prefix": "match_groupId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "nextMatchId"
+                  ],
+                  "name": "match_nextMatchId_idx_89cdf626",
+                  "prefix": "match_nextMatchId_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "teamAId"
@@ -1022,10 +1543,6 @@
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
                   "nullable": false
                 },
                 "discordId": {
@@ -1041,6 +1558,15 @@
                 "ign": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
+                  "nullable": false
+                },
+                "isCaptain": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
                   "nullable": false
                 },
                 "teamId": {
@@ -1101,6 +1627,159 @@
               },
               "uniques": []
             },
+            "round": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "duration": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "matchId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "mvpId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "roundIndex": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "screenshoot": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "teamAPoint": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "teamBPoint": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "winnerId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "round_matchId_idx_4caf5ecc"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "matchId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "round"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "match"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "round_winnerId_idx_5f7e5024"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "winnerId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "round"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "team"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "round_mvpId_idx_c3c86cd3"
+                  },
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "mvpId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "round"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "player"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "matchId"
+                  ],
+                  "name": "round_matchId_idx_4caf5ecc",
+                  "prefix": "round_matchId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "mvpId"
+                  ],
+                  "name": "round_mvpId_idx_c3c86cd3",
+                  "prefix": "round_mvpId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "winnerId"
+                  ],
+                  "name": "round_winnerId_idx_5f7e5024",
+                  "prefix": "round_winnerId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "team": {
               "checks": [
                 {
@@ -1113,9 +1792,19 @@
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "groupId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "groupPoints": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
-                    "expression": "now()",
-                    "kind": "function"
+                    "kind": "literal",
+                    "value": 0
                   },
                   "nullable": false
                 },
@@ -1149,15 +1838,6 @@
                   "dataType": "pg/text",
                   "nullable": true
                 },
-                "totalScore": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "default": {
-                    "kind": "literal",
-                    "value": 0
-                  },
-                  "nullable": false
-                },
                 "tournamentId": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -1189,9 +1869,36 @@
                     "namespaceId": "public",
                     "tableName": "tournament"
                   }
+                },
+                {
+                  "index": {
+                    "name": "team_groupId_idx_e2fb5578"
+                  },
+                  "source": {
+                    "columns": [
+                      "groupId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "team"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "group"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "groupId"
+                  ],
+                  "name": "team_groupId_idx_e2fb5578",
+                  "prefix": "team_groupId_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "tournamentId"
@@ -1218,24 +1925,54 @@
             "tournament": {
               "checks": [
                 {
+                  "expression": "\"format\" IN ('SINGLE_ELIMINATION', 'GROUP_STAGE')",
+                  "name": "tournament_format_check_1a916bac",
+                  "prefix": "tournament_format_check"
+                },
+                {
                   "expression": "\"status\" IN ('ACTIVE', 'PAUSED', 'ENDED')",
                   "name": "tournament_status_check_ae624668",
                   "prefix": "tournament_status_check"
                 }
               ],
               "columns": {
+                "advancePerGroup": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 2
+                  },
+                  "nullable": false
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
                   "nullable": false
+                },
+                "format": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "TournamentFormat",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "game": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
+                  "nullable": false
+                },
+                "groupCount": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
                   "nullable": false
                 },
                 "guildId": {
@@ -1308,12 +2045,27 @@
                 "COMPLETED"
               ]
             },
+            "MatchType": {
+              "kind": "valueSet",
+              "values": [
+                "GROUP_MATCH",
+                "KNOCKOUT_MATCH",
+                "FINAL"
+              ]
+            },
             "TeamStatus": {
               "kind": "valueSet",
               "values": [
                 "PENDING",
                 "APPROVED",
                 "REJECTED"
+              ]
+            },
+            "TournamentFormat": {
+              "kind": "valueSet",
+              "values": [
+                "SINGLE_ELIMINATION",
+                "GROUP_STAGE"
               ]
             },
             "TournamentStatus": {
@@ -1330,14 +2082,62 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d655ddefa9fafe97fce10738755df6b7712672fc4378ae353bb11846a6fe348a"
+    "storageHash": "d936008946f5f6f339be30d1c0874426d9f2b0ab2f59d081e6e6c7458963bf6f"
   },
   "execution": {
-    "executionHash": "e31c0549a1b744538a2de70e8bbf854264e518e3872145f0212f1b45512eb8a4",
+    "executionHash": "2d366329b0ed42116024061597c7c35110e21bf9f4f1df094c3c5aad964fe398",
     "mutations": {
       "defaults": [
         {
           "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "group",
+            "field": "createdAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "cuid2",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "group",
+            "field": "id",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "group",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "match",
+            "field": "createdAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
             "id": "cuid2",
             "kind": "generator"
           },
@@ -1359,6 +2159,17 @@
           "ref": {
             "entry": "match",
             "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "player",
+            "field": "createdAt",
             "namespace": "public"
           }
         },
@@ -1390,6 +2201,54 @@
         },
         {
           "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "round",
+            "field": "createdAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "cuid2",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "round",
+            "field": "id",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "round",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "team",
+            "field": "createdAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
             "id": "cuid2",
             "kind": "generator"
           },
@@ -1411,6 +2270,17 @@
           "ref": {
             "entry": "team",
             "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "tournament",
+            "field": "createdAt",
             "namespace": "public"
           }
         },

@@ -1,102 +1,179 @@
 //use prisma-8
 enum TournamentStatus {
-  ACTIVE
-  PAUSED
-  ENDED
+  @@type("pg/text@1")
+  ACTIVE = "ACTIVE"
+  PAUSED = "PAUSED"
+  ENDED = "ENDED"
+}
+
+enum TournamentFormat {
+  @@type("pg/text@1")
+  SINGLE_ELIMINATION = "SINGLE_ELIMINATION"
+  GROUP_STAGE = "GROUP_STAGE"
 }
 
 enum TeamStatus {
-  PENDING
-  APPROVED
-  REJECTED
+  @@type("pg/text@1")
+  PENDING = "PENDING"
+  APPROVED = "APPROVED"
+  REJECTED = "REJECTED"
 }
 
 enum MatchStatus {
-  PENDING
-  ONGOING
-  COMPLETED
+  @@type("pg/text@1")
+  PENDING = "PENDING"
+  ONGOING = "ONGOING"
+  COMPLETED = "COMPLETED"
+}
+
+enum MatchType {
+  @@type("pg/text@1")
+  GROUP_MATCH = "GROUP_MATCH"
+  KNOCKOUT_MATCH = "KNOCKOUT_MATCH"
+  FINAL = "FINAL"
+}
+
+model mixin Timestamps {
+  createdAt temporal.createdAtString()
+  updatedAt temporal.updatedAtString()
 }
 
 model Tournament {
-  id              String                     @id @default(cuid(2))
+  id              String             @id @default(cuid(2))
   guildId         String
   name            String
   game            String
+
+  format          TournamentFormat
+
   rules           String?
   rulesURL        String?
+
+  groupCount      Int                @default(0)
+  advancePerGroup Int                @default(2)
+
   registrationEnd TimestamptzString?
-  status          TournamentStatus           @default(ACTIVE)
-  createdAt       TimestamptzString          @default(now())
-  updatedAt       temporal.updatedAtString()
+
+  status          TournamentStatus   @default(ACTIVE)
 
   teams           Team[]
   matches         Match[]
+  groups          Group[]
+
+  +Timestamps
 
   @@map("tournament")
 }
 
+model Group {
+  id           String     @id @default(cuid(2))
+  name         String
+  tournamentId String
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  teams        Team[]
+  matches      Match[]
+
+  +Timestamps
+
+  @@map("group")
+}
+
 model Team {
-  id             String                     @id @default(cuid(2))
+  id             String     @id @default(cuid(2))
   name           String
   tag            String?
-  totalScore     Int                        @default(0)
-  status         TeamStatus                 @default(PENDING)
   tournamentId   String
-  createdAt      TimestamptzString          @default(now())
-  updatedAt      temporal.updatedAtString()
+  tournament     Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  status         TeamStatus @default(PENDING)
 
-  tournament     Tournament                 @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  groupId        String?
+  group          Group?     @relation(fields: [groupId], references: [id])
+  groupPoints    Int        @default(0)
 
   players        Player[]
 
-  matchesAsTeamA Match[]                    @relation("MatchTeamA")
-  matchesAsTeamB Match[]                    @relation("MatchTeamB")
+  matchesAsTeamA Match[]    @relation("MatchTeamA")
+  matchesAsTeamB Match[]    @relation("MatchTeamB")
+  roundsWon      Round[]    @relation("RoundWinner")
+
+  +Timestamps
 
   @@unique([name, tournamentId])
   @@map("team")
 }
 
 model Match {
-  id           String                     @id @default(cuid(2))
+  id           String             @id @default(cuid(2))
   tournamentId String
-  teamAId      String
-  teamAScore   Int? //rounds won
-  teamBId      String
-  teamBScore   Int?
-  winnerId     String? // winnerId = null => draw
-  roundCount   Int                        @default(1)
-  rounds       MatchRound[]
-  status       MatchStatus                @default(PENDING)
-  startTime    TimestamptzString?
-  createdAt    TimestamptzString          @default(now())
-  updatedAt    temporal.updatedAtString()
+  tournament   Tournament         @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
 
-  tournament   Tournament                 @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  teamA        Team                       @relation("MatchTeamA", fields: [teamAId], references: [id])
-  teamB        Team                       @relation("MatchTeamB", fields: [teamBId], references: [id])
+  type         MatchType
+  name         String
+  status       MatchStatus        @default(PENDING)
+  startTime    TimestamptzString?
+
+  groupId      String?
+  group        Group?             @relation(fields: [groupId], references: [id])
+
+  teamAId      String?
+  teamA        Team?              @relation("MatchTeamA", fields: [teamAId], references: [id])
+  teamAScore   Int?
+
+  teamBId      String?
+  teamB        Team?              @relation("MatchTeamB", fields: [teamBId], references: [id])
+  teamBScore   Int?
+
+  winnerId     String? // winnerId = null => draw
+
+  bestOf       Int                @default(3)
+  rounds       Round[]
+
+  nextMatchId  String?
+  nextMatch    Match?             @relation("BracketTree", fields: [nextMatchId], references: [id])
+  prevMatches  Match[]            @relation("BracketTree")
+
+  +Timestamps
 
   @@map("match")
 }
 
-model MatchRound {
-  id          Int    @id @default(autoincrement())
+model Round {
+  id          String  @id @default(cuid(2))
   matchId     String
-  match       Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  screenshoot String
+  match       Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  roundIndex  Int
+
+  winnerId    String?
+  winner      Team?   @relation("RoundWinner", fields: [winnerId], references: [id], onDelete: Cascade)
+
   teamAPoint  Int
   teamBPoint  Int
-  // matchMVPId  String?
+
+  screenshoot String
+  duration    Int?
+
+  mvpId       String?
+  mvp         Player? @relation(fields: [mvpId], references: [id], onDelete: SetNull)
+
+  +Timestamps
+
+  @@map("round")
 }
 
 model Player {
-  id        String                     @id @default(cuid(2))
+  id        String  @id @default(cuid(2))
   ign       String
   discordId String?
-  createdAt TimestamptzString          @default(now())
-  updatedAt temporal.updatedAtString()
 
   teamId    String
-  team      Team                       @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  team      Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  isCaptain Boolean @default(false)
+
+  roundsMvp Round[]
+
+  +Timestamps
 
   @@index([discordId])
   @@map("player")

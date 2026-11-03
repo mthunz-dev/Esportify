@@ -18,9 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d655ddefa9fafe97fce10738755df6b7712672fc4378ae353bb11846a6fe348a'>;
+  StorageHashBase<'d936008946f5f6f339be30d1c0874426d9f2b0ab2f59d081e6e6c7458963bf6f'>;
 export type ExecutionHash =
-  ExecutionHashBase<'e31c0549a1b744538a2de70e8bbf854264e518e3872145f0212f1b45512eb8a4'>;
+  ExecutionHashBase<'2d366329b0ed42116024061597c7c35110e21bf9f4f1df094c3c5aad964fe398'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -234,48 +234,70 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 
 export type FieldOutputTypes = {
   readonly public: {
-    readonly Match: {
+    readonly Group: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
-      readonly roundCount: CodecTypes['pg/int4@1']['output'];
-      readonly startTime: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
-      readonly teamAId: CodecTypes['pg/text@1']['output'];
-      readonly teamAScore: CodecTypes['pg/int4@1']['output'] | null;
-      readonly teamBId: CodecTypes['pg/text@1']['output'];
-      readonly teamBScore: CodecTypes['pg/int4@1']['output'] | null;
+      readonly name: CodecTypes['pg/text@1']['output'];
       readonly tournamentId: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly winnerId: CodecTypes['pg/text@1']['output'] | null;
     };
-    readonly MatchRound: {
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly matchId: CodecTypes['pg/text@1']['output'];
-      readonly screenshoot: CodecTypes['pg/text@1']['output'];
-      readonly teamAPoint: CodecTypes['pg/int4@1']['output'];
-      readonly teamBPoint: CodecTypes['pg/int4@1']['output'];
+    readonly Match: {
+      readonly bestOf: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly groupId: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly nextMatchId: CodecTypes['pg/text@1']['output'] | null;
+      readonly startTime: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
+      readonly teamAId: CodecTypes['pg/text@1']['output'] | null;
+      readonly teamAScore: CodecTypes['pg/int4@1']['output'] | null;
+      readonly teamBId: CodecTypes['pg/text@1']['output'] | null;
+      readonly teamBScore: CodecTypes['pg/int4@1']['output'] | null;
+      readonly tournamentId: CodecTypes['pg/text@1']['output'];
+      readonly type: 'GROUP_MATCH' | 'KNOCKOUT_MATCH' | 'FINAL';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly winnerId: CodecTypes['pg/text@1']['output'] | null;
     };
     readonly Player: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly discordId: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly ign: CodecTypes['pg/text@1']['output'];
+      readonly isCaptain: CodecTypes['pg/bool@1']['output'];
       readonly teamId: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly Round: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly duration: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly matchId: CodecTypes['pg/text@1']['output'];
+      readonly mvpId: CodecTypes['pg/text@1']['output'] | null;
+      readonly roundIndex: CodecTypes['pg/int4@1']['output'];
+      readonly screenshoot: CodecTypes['pg/text@1']['output'];
+      readonly teamAPoint: CodecTypes['pg/int4@1']['output'];
+      readonly teamBPoint: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly winnerId: CodecTypes['pg/text@1']['output'] | null;
+    };
     readonly Team: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly groupId: CodecTypes['pg/text@1']['output'] | null;
+      readonly groupPoints: CodecTypes['pg/int4@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly status: 'PENDING' | 'APPROVED' | 'REJECTED';
       readonly tag: CodecTypes['pg/text@1']['output'] | null;
-      readonly totalScore: CodecTypes['pg/int4@1']['output'];
       readonly tournamentId: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Tournament: {
+      readonly advancePerGroup: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly format: 'SINGLE_ELIMINATION' | 'GROUP_STAGE';
       readonly game: CodecTypes['pg/text@1']['output'];
+      readonly groupCount: CodecTypes['pg/int4@1']['output'];
       readonly guildId: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -289,48 +311,70 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
   readonly public: {
-    readonly Match: {
+    readonly Group: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
-      readonly roundCount: CodecTypes['pg/int4@1']['input'];
-      readonly startTime: CodecTypes['pg/timestamptz-string@1']['input'] | null;
-      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
-      readonly teamAId: CodecTypes['pg/text@1']['input'];
-      readonly teamAScore: CodecTypes['pg/int4@1']['input'] | null;
-      readonly teamBId: CodecTypes['pg/text@1']['input'];
-      readonly teamBScore: CodecTypes['pg/int4@1']['input'] | null;
+      readonly name: CodecTypes['pg/text@1']['input'];
       readonly tournamentId: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly winnerId: CodecTypes['pg/text@1']['input'] | null;
     };
-    readonly MatchRound: {
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly matchId: CodecTypes['pg/text@1']['input'];
-      readonly screenshoot: CodecTypes['pg/text@1']['input'];
-      readonly teamAPoint: CodecTypes['pg/int4@1']['input'];
-      readonly teamBPoint: CodecTypes['pg/int4@1']['input'];
+    readonly Match: {
+      readonly bestOf: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly groupId: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly nextMatchId: CodecTypes['pg/text@1']['input'] | null;
+      readonly startTime: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
+      readonly teamAId: CodecTypes['pg/text@1']['input'] | null;
+      readonly teamAScore: CodecTypes['pg/int4@1']['input'] | null;
+      readonly teamBId: CodecTypes['pg/text@1']['input'] | null;
+      readonly teamBScore: CodecTypes['pg/int4@1']['input'] | null;
+      readonly tournamentId: CodecTypes['pg/text@1']['input'];
+      readonly type: 'GROUP_MATCH' | 'KNOCKOUT_MATCH' | 'FINAL';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly winnerId: CodecTypes['pg/text@1']['input'] | null;
     };
     readonly Player: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly discordId: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly ign: CodecTypes['pg/text@1']['input'];
+      readonly isCaptain: CodecTypes['pg/bool@1']['input'];
       readonly teamId: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly Round: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly duration: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly matchId: CodecTypes['pg/text@1']['input'];
+      readonly mvpId: CodecTypes['pg/text@1']['input'] | null;
+      readonly roundIndex: CodecTypes['pg/int4@1']['input'];
+      readonly screenshoot: CodecTypes['pg/text@1']['input'];
+      readonly teamAPoint: CodecTypes['pg/int4@1']['input'];
+      readonly teamBPoint: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly winnerId: CodecTypes['pg/text@1']['input'] | null;
+    };
     readonly Team: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly groupId: CodecTypes['pg/text@1']['input'] | null;
+      readonly groupPoints: CodecTypes['pg/int4@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly status: 'PENDING' | 'APPROVED' | 'REJECTED';
       readonly tag: CodecTypes['pg/text@1']['input'] | null;
-      readonly totalScore: CodecTypes['pg/int4@1']['input'];
       readonly tournamentId: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Tournament: {
+      readonly advancePerGroup: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly format: 'SINGLE_ELIMINATION' | 'GROUP_STAGE';
       readonly game: CodecTypes['pg/text@1']['input'];
+      readonly groupCount: CodecTypes['pg/int4@1']['input'];
       readonly guildId: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -344,48 +388,70 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
-    readonly match: {
+    readonly group: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
-      readonly roundCount: CodecTypes['pg/int4@1']['output'];
-      readonly startTime: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
-      readonly teamAId: CodecTypes['pg/text@1']['output'];
-      readonly teamAScore: CodecTypes['pg/int4@1']['output'] | null;
-      readonly teamBId: CodecTypes['pg/text@1']['output'];
-      readonly teamBScore: CodecTypes['pg/int4@1']['output'] | null;
+      readonly name: CodecTypes['pg/text@1']['output'];
       readonly tournamentId: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly winnerId: CodecTypes['pg/text@1']['output'] | null;
     };
-    readonly MatchRound: {
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly matchId: CodecTypes['pg/text@1']['output'];
-      readonly screenshoot: CodecTypes['pg/text@1']['output'];
-      readonly teamAPoint: CodecTypes['pg/int4@1']['output'];
-      readonly teamBPoint: CodecTypes['pg/int4@1']['output'];
+    readonly match: {
+      readonly bestOf: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly groupId: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly nextMatchId: CodecTypes['pg/text@1']['output'] | null;
+      readonly startTime: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
+      readonly teamAId: CodecTypes['pg/text@1']['output'] | null;
+      readonly teamAScore: CodecTypes['pg/int4@1']['output'] | null;
+      readonly teamBId: CodecTypes['pg/text@1']['output'] | null;
+      readonly teamBScore: CodecTypes['pg/int4@1']['output'] | null;
+      readonly tournamentId: CodecTypes['pg/text@1']['output'];
+      readonly type: 'GROUP_MATCH' | 'KNOCKOUT_MATCH' | 'FINAL';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly winnerId: CodecTypes['pg/text@1']['output'] | null;
     };
     readonly player: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly discordId: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly ign: CodecTypes['pg/text@1']['output'];
+      readonly isCaptain: CodecTypes['pg/bool@1']['output'];
       readonly teamId: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly round: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly duration: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly matchId: CodecTypes['pg/text@1']['output'];
+      readonly mvpId: CodecTypes['pg/text@1']['output'] | null;
+      readonly roundIndex: CodecTypes['pg/int4@1']['output'];
+      readonly screenshoot: CodecTypes['pg/text@1']['output'];
+      readonly teamAPoint: CodecTypes['pg/int4@1']['output'];
+      readonly teamBPoint: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly winnerId: CodecTypes['pg/text@1']['output'] | null;
+    };
     readonly team: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly groupId: CodecTypes['pg/text@1']['output'] | null;
+      readonly groupPoints: CodecTypes['pg/int4@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly status: 'PENDING' | 'APPROVED' | 'REJECTED';
       readonly tag: CodecTypes['pg/text@1']['output'] | null;
-      readonly totalScore: CodecTypes['pg/int4@1']['output'];
       readonly tournamentId: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly tournament: {
+      readonly advancePerGroup: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly format: 'SINGLE_ELIMINATION' | 'GROUP_STAGE';
       readonly game: CodecTypes['pg/text@1']['output'];
+      readonly groupCount: CodecTypes['pg/int4@1']['output'];
       readonly guildId: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -399,48 +465,70 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
-    readonly match: {
+    readonly group: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
-      readonly roundCount: CodecTypes['pg/int4@1']['input'];
-      readonly startTime: CodecTypes['pg/timestamptz-string@1']['input'] | null;
-      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
-      readonly teamAId: CodecTypes['pg/text@1']['input'];
-      readonly teamAScore: CodecTypes['pg/int4@1']['input'] | null;
-      readonly teamBId: CodecTypes['pg/text@1']['input'];
-      readonly teamBScore: CodecTypes['pg/int4@1']['input'] | null;
+      readonly name: CodecTypes['pg/text@1']['input'];
       readonly tournamentId: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly winnerId: CodecTypes['pg/text@1']['input'] | null;
     };
-    readonly MatchRound: {
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly matchId: CodecTypes['pg/text@1']['input'];
-      readonly screenshoot: CodecTypes['pg/text@1']['input'];
-      readonly teamAPoint: CodecTypes['pg/int4@1']['input'];
-      readonly teamBPoint: CodecTypes['pg/int4@1']['input'];
+    readonly match: {
+      readonly bestOf: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly groupId: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly nextMatchId: CodecTypes['pg/text@1']['input'] | null;
+      readonly startTime: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly status: 'PENDING' | 'ONGOING' | 'COMPLETED';
+      readonly teamAId: CodecTypes['pg/text@1']['input'] | null;
+      readonly teamAScore: CodecTypes['pg/int4@1']['input'] | null;
+      readonly teamBId: CodecTypes['pg/text@1']['input'] | null;
+      readonly teamBScore: CodecTypes['pg/int4@1']['input'] | null;
+      readonly tournamentId: CodecTypes['pg/text@1']['input'];
+      readonly type: 'GROUP_MATCH' | 'KNOCKOUT_MATCH' | 'FINAL';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly winnerId: CodecTypes['pg/text@1']['input'] | null;
     };
     readonly player: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly discordId: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly ign: CodecTypes['pg/text@1']['input'];
+      readonly isCaptain: CodecTypes['pg/bool@1']['input'];
       readonly teamId: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly round: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly duration: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly matchId: CodecTypes['pg/text@1']['input'];
+      readonly mvpId: CodecTypes['pg/text@1']['input'] | null;
+      readonly roundIndex: CodecTypes['pg/int4@1']['input'];
+      readonly screenshoot: CodecTypes['pg/text@1']['input'];
+      readonly teamAPoint: CodecTypes['pg/int4@1']['input'];
+      readonly teamBPoint: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly winnerId: CodecTypes['pg/text@1']['input'] | null;
+    };
     readonly team: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly groupId: CodecTypes['pg/text@1']['input'] | null;
+      readonly groupPoints: CodecTypes['pg/int4@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly status: 'PENDING' | 'APPROVED' | 'REJECTED';
       readonly tag: CodecTypes['pg/text@1']['input'] | null;
-      readonly totalScore: CodecTypes['pg/int4@1']['input'];
       readonly tournamentId: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly tournament: {
+      readonly advancePerGroup: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly format: 'SINGLE_ELIMINATION' | 'GROUP_STAGE';
       readonly game: CodecTypes['pg/text@1']['input'];
+      readonly groupCount: CodecTypes['pg/int4@1']['input'];
       readonly guildId: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -454,62 +542,98 @@ export type StorageColumnInputTypes = {
 };
 
 export namespace Models {
-  export type public_Match = {
+  export type public_Group = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     id: CodecTypes['pg/text@1']['output'];
-    roundCount: CodecTypes['pg/int4@1']['output'];
-    startTime: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-    status: 'PENDING' | 'ONGOING' | 'COMPLETED';
-    teamAId: CodecTypes['pg/text@1']['output'];
-    teamAScore: CodecTypes['pg/int4@1']['output'] | null;
-    teamBId: CodecTypes['pg/text@1']['output'];
-    teamBScore: CodecTypes['pg/int4@1']['output'] | null;
+    name: CodecTypes['pg/text@1']['output'];
     tournamentId: CodecTypes['pg/text@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    winnerId: CodecTypes['pg/text@1']['output'] | null;
-    rounds: public_MatchRound[];
-    teamA: public_Team;
-    teamB: public_Team;
+    matches: public_Match[];
+    teams: public_Team[];
     tournament: public_Tournament;
-    readonly [RelationKeys]?: 'rounds' | 'teamA' | 'teamB' | 'tournament';
+    readonly [RelationKeys]?: 'matches' | 'teams' | 'tournament';
   };
-  export type public_MatchRound = {
-    id: CodecTypes['pg/int4@1']['output'];
-    matchId: CodecTypes['pg/text@1']['output'];
-    screenshoot: CodecTypes['pg/text@1']['output'];
-    teamAPoint: CodecTypes['pg/int4@1']['output'];
-    teamBPoint: CodecTypes['pg/int4@1']['output'];
-    match: public_Match;
-    readonly [RelationKeys]?: 'match';
+  export type public_Match = {
+    bestOf: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    groupId: CodecTypes['pg/text@1']['output'] | null;
+    id: CodecTypes['pg/text@1']['output'];
+    name: CodecTypes['pg/text@1']['output'];
+    nextMatchId: CodecTypes['pg/text@1']['output'] | null;
+    startTime: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    status: 'PENDING' | 'ONGOING' | 'COMPLETED';
+    teamAId: CodecTypes['pg/text@1']['output'] | null;
+    teamAScore: CodecTypes['pg/int4@1']['output'] | null;
+    teamBId: CodecTypes['pg/text@1']['output'] | null;
+    teamBScore: CodecTypes['pg/int4@1']['output'] | null;
+    tournamentId: CodecTypes['pg/text@1']['output'];
+    type: 'GROUP_MATCH' | 'KNOCKOUT_MATCH' | 'FINAL';
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    winnerId: CodecTypes['pg/text@1']['output'] | null;
+    group: public_Group | null;
+    nextMatch: public_Match | null;
+    prevMatches: public_Match[];
+    rounds: public_Round[];
+    teamA: public_Team | null;
+    teamB: public_Team | null;
+    tournament: public_Tournament;
+    readonly [RelationKeys]?:
+      'group' | 'nextMatch' | 'prevMatches' | 'rounds' | 'teamA' | 'teamB' | 'tournament';
   };
   export type public_Player = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     discordId: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/text@1']['output'];
     ign: CodecTypes['pg/text@1']['output'];
+    isCaptain: CodecTypes['pg/bool@1']['output'];
     teamId: CodecTypes['pg/text@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    roundsMvp: public_Round[];
     team: public_Team;
-    readonly [RelationKeys]?: 'team';
+    readonly [RelationKeys]?: 'roundsMvp' | 'team';
+  };
+  export type public_Round = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    duration: CodecTypes['pg/int4@1']['output'] | null;
+    id: CodecTypes['pg/text@1']['output'];
+    matchId: CodecTypes['pg/text@1']['output'];
+    mvpId: CodecTypes['pg/text@1']['output'] | null;
+    roundIndex: CodecTypes['pg/int4@1']['output'];
+    screenshoot: CodecTypes['pg/text@1']['output'];
+    teamAPoint: CodecTypes['pg/int4@1']['output'];
+    teamBPoint: CodecTypes['pg/int4@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    winnerId: CodecTypes['pg/text@1']['output'] | null;
+    match: public_Match;
+    mvp: public_Player | null;
+    winner: public_Team | null;
+    readonly [RelationKeys]?: 'match' | 'mvp' | 'winner';
   };
   export type public_Team = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    groupId: CodecTypes['pg/text@1']['output'] | null;
+    groupPoints: CodecTypes['pg/int4@1']['output'];
     id: CodecTypes['pg/text@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
     status: 'PENDING' | 'APPROVED' | 'REJECTED';
     tag: CodecTypes['pg/text@1']['output'] | null;
-    totalScore: CodecTypes['pg/int4@1']['output'];
     tournamentId: CodecTypes['pg/text@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    group: public_Group | null;
     matchesAsTeamA: public_Match[];
     matchesAsTeamB: public_Match[];
     players: public_Player[];
+    roundsWon: public_Round[];
     tournament: public_Tournament;
-    readonly [RelationKeys]?: 'matchesAsTeamA' | 'matchesAsTeamB' | 'players' | 'tournament';
+    readonly [RelationKeys]?:
+      'group' | 'matchesAsTeamA' | 'matchesAsTeamB' | 'players' | 'roundsWon' | 'tournament';
   };
   export type public_Tournament = {
+    advancePerGroup: CodecTypes['pg/int4@1']['output'];
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    format: 'SINGLE_ELIMINATION' | 'GROUP_STAGE';
     game: CodecTypes['pg/text@1']['output'];
+    groupCount: CodecTypes['pg/int4@1']['output'];
     guildId: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/text@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
@@ -518,17 +642,19 @@ export namespace Models {
     rulesURL: CodecTypes['pg/text@1']['output'] | null;
     status: 'ACTIVE' | 'PAUSED' | 'ENDED';
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    groups: public_Group[];
     matches: public_Match[];
     teams: public_Team[];
-    readonly [RelationKeys]?: 'matches' | 'teams';
+    readonly [RelationKeys]?: 'groups' | 'matches' | 'teams';
   };
 }
 
 export declare const models: {
   public: {
+    Group: Models.public_Group;
     Match: Models.public_Match;
-    MatchRound: Models.public_MatchRound;
     Player: Models.public_Player;
+    Round: Models.public_Round;
     Team: Models.public_Team;
     Tournament: Models.public_Tournament;
   };
@@ -552,13 +678,12 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
-            readonly match: {
+            readonly group: {
               columns: {
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
                   readonly many: false;
                 };
                 readonly id: {
@@ -567,14 +692,90 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
-                readonly roundCount: {
+                readonly name: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly tournamentId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'group_tournamentId_idx_d0bd97a6';
+                  readonly prefix: 'group_tournamentId_idx';
+                  readonly columns: readonly ['tournamentId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'group';
+                    readonly columns: readonly ['tournamentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'tournament';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly match: {
+              columns: {
+                readonly bestOf: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
                   readonly default: {
                     readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 3>;
                   };
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly groupId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly name: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly nextMatchId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly startTime: {
@@ -596,7 +797,7 @@ type ContractBase = Omit<
                 readonly teamAId: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly teamAScore: {
@@ -608,7 +809,7 @@ type ContractBase = Omit<
                 readonly teamBId: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly teamBScore: {
@@ -618,6 +819,12 @@ type ContractBase = Omit<
                   readonly many: false;
                 };
                 readonly tournamentId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly type: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
@@ -639,6 +846,18 @@ type ContractBase = Omit<
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [];
               indexes: readonly [
+                {
+                  readonly name: 'match_groupId_idx_e2fb5578';
+                  readonly prefix: 'match_groupId_idx';
+                  readonly columns: readonly ['groupId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'match_nextMatchId_idx_89cdf626';
+                  readonly prefix: 'match_nextMatchId_idx';
+                  readonly columns: readonly ['nextMatchId'];
+                  readonly unique: false;
+                },
                 {
                   readonly name: 'match_teamAId_idx_abcaa351';
                   readonly prefix: 'match_teamAId_idx';
@@ -675,6 +894,18 @@ type ContractBase = Omit<
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'match';
+                    readonly columns: readonly ['groupId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'group';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'match';
                     readonly columns: readonly ['teamAId'];
                   };
                   readonly target: {
@@ -695,61 +926,11 @@ type ContractBase = Omit<
                     readonly columns: readonly ['id'];
                   };
                 },
-              ];
-            };
-            readonly MatchRound: {
-              columns: {
-                readonly id: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                  readonly many: false;
-                };
-                readonly matchId: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-                readonly screenshoot: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-                readonly teamAPoint: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-                readonly teamBPoint: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
-              indexes: readonly [
-                {
-                  readonly name: 'MatchRound_matchId_idx_4caf5ecc';
-                  readonly prefix: 'MatchRound_matchId_idx';
-                  readonly columns: readonly ['matchId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
                 {
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'MatchRound';
-                    readonly columns: readonly ['matchId'];
+                    readonly tableName: 'match';
+                    readonly columns: readonly ['nextMatchId'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
@@ -765,7 +946,6 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
                   readonly many: false;
                 };
                 readonly discordId: {
@@ -784,6 +964,16 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly isCaptain: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
                   readonly many: false;
                 };
                 readonly teamId: {
@@ -830,13 +1020,158 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly round: {
+              columns: {
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly duration: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly matchId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly mvpId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly roundIndex: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly screenshoot: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly teamAPoint: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly teamBPoint: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly winnerId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'round_matchId_idx_4caf5ecc';
+                  readonly prefix: 'round_matchId_idx';
+                  readonly columns: readonly ['matchId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'round_mvpId_idx_c3c86cd3';
+                  readonly prefix: 'round_mvpId_idx';
+                  readonly columns: readonly ['mvpId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'round_winnerId_idx_5f7e5024';
+                  readonly prefix: 'round_winnerId_idx';
+                  readonly columns: readonly ['winnerId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'round';
+                    readonly columns: readonly ['matchId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'match';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'round';
+                    readonly columns: readonly ['winnerId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'team';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'round';
+                    readonly columns: readonly ['mvpId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'player';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly team: {
               columns: {
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly groupId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly groupPoints: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
+                  };
                   readonly many: false;
                 };
                 readonly id: {
@@ -867,16 +1202,6 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
-                readonly totalScore: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
-                  };
-                  readonly many: false;
-                };
                 readonly tournamentId: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -893,6 +1218,12 @@ type ContractBase = Omit<
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [{ readonly columns: readonly ['name', 'tournamentId'] }];
               indexes: readonly [
+                {
+                  readonly name: 'team_groupId_idx_e2fb5578';
+                  readonly prefix: 'team_groupId_idx';
+                  readonly columns: readonly ['groupId'];
+                  readonly unique: false;
+                },
                 {
                   readonly name: 'team_tournamentId_idx_d0bd97a6';
                   readonly prefix: 'team_tournamentId_idx';
@@ -913,21 +1244,58 @@ type ContractBase = Omit<
                     readonly columns: readonly ['id'];
                   };
                 },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'team';
+                    readonly columns: readonly ['groupId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'group';
+                    readonly columns: readonly ['id'];
+                  };
+                },
               ];
             };
             readonly tournament: {
               columns: {
+                readonly advancePerGroup: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 2>;
+                  };
+                  readonly many: false;
+                };
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly format: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
                   readonly many: false;
                 };
                 readonly game: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly groupCount: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
+                  };
                   readonly many: false;
                 };
                 readonly guildId: {
@@ -994,9 +1362,17 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['PENDING', 'ONGOING', 'COMPLETED'];
             };
+            readonly MatchType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['GROUP_MATCH', 'KNOCKOUT_MATCH', 'FINAL'];
+            };
             readonly TeamStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['PENDING', 'APPROVED', 'REJECTED'];
+            };
+            readonly TournamentFormat: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['SINGLE_ELIMINATION', 'GROUP_STAGE'];
             };
             readonly TournamentStatus: {
               readonly kind: 'valueSet';
@@ -1013,12 +1389,10 @@ type ContractBase = Omit<
   readonly target: 'postgres';
   readonly targetFamily: 'sql';
   readonly roots: {
-    readonly MatchRound: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'MatchRound';
-    };
+    readonly group: { readonly namespace: 'public' & NamespaceId; readonly model: 'Group' };
     readonly match: { readonly namespace: 'public' & NamespaceId; readonly model: 'Match' };
     readonly player: { readonly namespace: 'public' & NamespaceId; readonly model: 'Player' };
+    readonly round: { readonly namespace: 'public' & NamespaceId; readonly model: 'Round' };
     readonly team: { readonly namespace: 'public' & NamespaceId; readonly model: 'Team' };
     readonly tournament: {
       readonly namespace: 'public' & NamespaceId;
@@ -1029,7 +1403,7 @@ type ContractBase = Omit<
     readonly namespaces: {
       readonly public: {
         readonly models: {
-          readonly Match: {
+          readonly Group: {
             readonly fields: {
               readonly createdAt: {
                 readonly nullable: false;
@@ -1042,9 +1416,95 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly roundCount: {
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly tournamentId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly matches: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Match';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['groupId'];
+                };
+              };
+              readonly teams: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Team' };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['groupId'];
+                };
+              };
+              readonly tournament: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Tournament';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['tournamentId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'group';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly id: { readonly column: 'id' };
+                readonly name: { readonly column: 'name' };
+                readonly tournamentId: { readonly column: 'tournamentId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly Match: {
+            readonly fields: {
+              readonly bestOf: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly groupId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly nextMatchId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly startTime: {
                 readonly nullable: true;
@@ -1058,7 +1518,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly teamAId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly teamAScore: {
@@ -1066,7 +1526,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly teamBId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly teamBScore: {
@@ -1074,6 +1534,10 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly tournamentId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly type: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -1090,10 +1554,45 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly group: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Group';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['groupId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly nextMatch: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Match';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['nextMatchId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly prevMatches: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Match';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['nextMatchId'];
+                };
+              };
               readonly rounds: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'MatchRound';
+                  readonly model: 'Round';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -1104,7 +1603,7 @@ type ContractBase = Omit<
               readonly teamA: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Team' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['teamAId'];
                   readonly targetFields: readonly ['id'];
@@ -1113,7 +1612,7 @@ type ContractBase = Omit<
               readonly teamB: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Team' };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['teamBId'];
                   readonly targetFields: readonly ['id'];
@@ -1136,9 +1635,12 @@ type ContractBase = Omit<
               readonly table: 'match';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly bestOf: { readonly column: 'bestOf' };
                 readonly createdAt: { readonly column: 'createdAt' };
+                readonly groupId: { readonly column: 'groupId' };
                 readonly id: { readonly column: 'id' };
-                readonly roundCount: { readonly column: 'roundCount' };
+                readonly name: { readonly column: 'name' };
+                readonly nextMatchId: { readonly column: 'nextMatchId' };
                 readonly startTime: { readonly column: 'startTime' };
                 readonly status: { readonly column: 'status' };
                 readonly teamAId: { readonly column: 'teamAId' };
@@ -1146,57 +1648,9 @@ type ContractBase = Omit<
                 readonly teamBId: { readonly column: 'teamBId' };
                 readonly teamBScore: { readonly column: 'teamBScore' };
                 readonly tournamentId: { readonly column: 'tournamentId' };
+                readonly type: { readonly column: 'type' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly winnerId: { readonly column: 'winnerId' };
-              };
-            };
-          };
-          readonly MatchRound: {
-            readonly fields: {
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly matchId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly screenshoot: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly teamAPoint: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly teamBPoint: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-            };
-            readonly relations: {
-              readonly match: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Match';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['matchId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'MatchRound';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly id: { readonly column: 'id' };
-                readonly matchId: { readonly column: 'matchId' };
-                readonly screenshoot: { readonly column: 'screenshoot' };
-                readonly teamAPoint: { readonly column: 'teamAPoint' };
-                readonly teamBPoint: { readonly column: 'teamBPoint' };
               };
             };
           };
@@ -1221,6 +1675,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly isCaptain: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly teamId: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -1234,6 +1692,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly roundsMvp: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Round';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['mvpId'];
+                };
+              };
               readonly team: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Team' };
                 readonly cardinality: 'N:1';
@@ -1252,8 +1721,115 @@ type ContractBase = Omit<
                 readonly discordId: { readonly column: 'discordId' };
                 readonly id: { readonly column: 'id' };
                 readonly ign: { readonly column: 'ign' };
+                readonly isCaptain: { readonly column: 'isCaptain' };
                 readonly teamId: { readonly column: 'teamId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly Round: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly duration: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly matchId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly mvpId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly roundIndex: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly screenshoot: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly teamAPoint: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly teamBPoint: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly winnerId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly match: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Match';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['matchId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly mvp: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Player';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['mvpId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly winner: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Team' };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['winnerId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'round';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly duration: { readonly column: 'duration' };
+                readonly id: { readonly column: 'id' };
+                readonly matchId: { readonly column: 'matchId' };
+                readonly mvpId: { readonly column: 'mvpId' };
+                readonly roundIndex: { readonly column: 'roundIndex' };
+                readonly screenshoot: { readonly column: 'screenshoot' };
+                readonly teamAPoint: { readonly column: 'teamAPoint' };
+                readonly teamBPoint: { readonly column: 'teamBPoint' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+                readonly winnerId: { readonly column: 'winnerId' };
               };
             };
           };
@@ -1265,6 +1841,14 @@ type ContractBase = Omit<
                   readonly kind: 'scalar';
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
+              };
+              readonly groupId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly groupPoints: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly id: {
                 readonly nullable: false;
@@ -1282,10 +1866,6 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly totalScore: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
               readonly tournamentId: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -1299,6 +1879,18 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly group: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Group';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['groupId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
               readonly matchesAsTeamA: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -1332,6 +1924,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['teamId'];
                 };
               };
+              readonly roundsWon: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Round';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['winnerId'];
+                };
+              };
               readonly tournament: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -1350,11 +1953,12 @@ type ContractBase = Omit<
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly createdAt: { readonly column: 'createdAt' };
+                readonly groupId: { readonly column: 'groupId' };
+                readonly groupPoints: { readonly column: 'groupPoints' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
                 readonly status: { readonly column: 'status' };
                 readonly tag: { readonly column: 'tag' };
-                readonly totalScore: { readonly column: 'totalScore' };
                 readonly tournamentId: { readonly column: 'tournamentId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
@@ -1362,6 +1966,10 @@ type ContractBase = Omit<
           };
           readonly Tournament: {
             readonly fields: {
+              readonly advancePerGroup: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -1369,9 +1977,17 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly format: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly game: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly groupCount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly guildId: {
                 readonly nullable: false;
@@ -1413,6 +2029,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly groups: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Group';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['tournamentId'];
+                };
+              };
               readonly matches: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -1437,8 +2064,11 @@ type ContractBase = Omit<
               readonly table: 'tournament';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly advancePerGroup: { readonly column: 'advancePerGroup' };
                 readonly createdAt: { readonly column: 'createdAt' };
+                readonly format: { readonly column: 'format' };
                 readonly game: { readonly column: 'game' };
+                readonly groupCount: { readonly column: 'groupCount' };
                 readonly guildId: { readonly column: 'guildId' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
@@ -1460,12 +2090,27 @@ type ContractBase = Omit<
               { readonly name: 'COMPLETED'; readonly value: 'COMPLETED' },
             ];
           };
+          readonly MatchType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'GROUP_MATCH'; readonly value: 'GROUP_MATCH' },
+              { readonly name: 'KNOCKOUT_MATCH'; readonly value: 'KNOCKOUT_MATCH' },
+              { readonly name: 'FINAL'; readonly value: 'FINAL' },
+            ];
+          };
           readonly TeamStatus: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
               { readonly name: 'PENDING'; readonly value: 'PENDING' },
               { readonly name: 'APPROVED'; readonly value: 'APPROVED' },
               { readonly name: 'REJECTED'; readonly value: 'REJECTED' },
+            ];
+          };
+          readonly TournamentFormat: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'SINGLE_ELIMINATION'; readonly value: 'SINGLE_ELIMINATION' },
+              { readonly name: 'GROUP_STAGE'; readonly value: 'GROUP_STAGE' },
             ];
           };
           readonly TournamentStatus: {
@@ -1483,10 +2128,19 @@ type ContractBase = Omit<
             { readonly name: 'ONGOING'; readonly value: 'ONGOING' },
             { readonly name: 'COMPLETED'; readonly value: 'COMPLETED' },
           ];
+          readonly MatchType: readonly [
+            { readonly name: 'GROUP_MATCH'; readonly value: 'GROUP_MATCH' },
+            { readonly name: 'KNOCKOUT_MATCH'; readonly value: 'KNOCKOUT_MATCH' },
+            { readonly name: 'FINAL'; readonly value: 'FINAL' },
+          ];
           readonly TeamStatus: readonly [
             { readonly name: 'PENDING'; readonly value: 'PENDING' },
             { readonly name: 'APPROVED'; readonly value: 'APPROVED' },
             { readonly name: 'REJECTED'; readonly value: 'REJECTED' },
+          ];
+          readonly TournamentFormat: readonly [
+            { readonly name: 'SINGLE_ELIMINATION'; readonly value: 'SINGLE_ELIMINATION' },
+            { readonly name: 'GROUP_STAGE'; readonly value: 'GROUP_STAGE' },
           ];
           readonly TournamentStatus: readonly [
             { readonly name: 'ACTIVE'; readonly value: 'ACTIVE' },
@@ -1530,6 +2184,39 @@ type ContractBase = Omit<
     readonly mutations: {
       readonly defaults: readonly [
         {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'group';
+            readonly field: 'createdAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'group';
+            readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'group';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'match';
+            readonly field: 'createdAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
           readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'match';
@@ -1543,6 +2230,14 @@ type ContractBase = Omit<
           readonly ref: {
             readonly entry: 'match';
             readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'player';
+            readonly field: 'createdAt';
             readonly namespace: 'public';
           };
         },
@@ -1564,6 +2259,39 @@ type ContractBase = Omit<
           };
         },
         {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'round';
+            readonly field: 'createdAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'round';
+            readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'round';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'team';
+            readonly field: 'createdAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
           readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'team';
@@ -1577,6 +2305,14 @@ type ContractBase = Omit<
           readonly ref: {
             readonly entry: 'team';
             readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'tournament';
+            readonly field: 'createdAt';
             readonly namespace: 'public';
           };
         },

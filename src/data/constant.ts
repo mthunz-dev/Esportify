@@ -10,3 +10,6 @@ export const buttonLoading = new MessageBuilder().setComponents([
         disabled: true,
     },
 ]);
+
+// blank: "ㅤ"
+// dot: •
