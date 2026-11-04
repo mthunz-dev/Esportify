@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d936008946f5f6f339be30d1c0874426d9f2b0ab2f59d081e6e6c7458963bf6f'>;
+  StorageHashBase<'32cd357928c107c2506e15f724e78ca98104a447d2b47e1f19a882041aa109c1'>;
 export type ExecutionHash =
   ExecutionHashBase<'2d366329b0ed42116024061597c7c35110e21bf9f4f1df094c3c5aad964fe398'>;
 export type ProfileHash =
@@ -305,6 +305,7 @@ export type FieldOutputTypes = {
       readonly rules: CodecTypes['pg/text@1']['output'] | null;
       readonly rulesURL: CodecTypes['pg/text@1']['output'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
+      readonly teamCount: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
   };
@@ -382,6 +383,7 @@ export type FieldInputTypes = {
       readonly rules: CodecTypes['pg/text@1']['input'] | null;
       readonly rulesURL: CodecTypes['pg/text@1']['input'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
+      readonly teamCount: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
   };
@@ -459,6 +461,7 @@ export type StorageColumnTypes = {
       readonly rules: CodecTypes['pg/text@1']['output'] | null;
       readonly rulesURL: CodecTypes['pg/text@1']['output'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
+      readonly teamCount: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
   };
@@ -536,6 +539,7 @@ export type StorageColumnInputTypes = {
       readonly rules: CodecTypes['pg/text@1']['input'] | null;
       readonly rulesURL: CodecTypes['pg/text@1']['input'] | null;
       readonly status: 'ACTIVE' | 'PAUSED' | 'ENDED';
+      readonly teamCount: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
   };
@@ -641,6 +645,7 @@ export namespace Models {
     rules: CodecTypes['pg/text@1']['output'] | null;
     rulesURL: CodecTypes['pg/text@1']['output'] | null;
     status: 'ACTIVE' | 'PAUSED' | 'ENDED';
+    teamCount: CodecTypes['pg/int4@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     groups: public_Group[];
     matches: public_Match[];
@@ -1344,6 +1349,12 @@ type ContractBase = Omit<
                   };
                   readonly many: false;
                 };
+                readonly teamCount: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
                 readonly updatedAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
@@ -2020,6 +2031,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly teamCount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly updatedAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -2076,6 +2091,7 @@ type ContractBase = Omit<
                 readonly rules: { readonly column: 'rules' };
                 readonly rulesURL: { readonly column: 'rulesURL' };
                 readonly status: { readonly column: 'status' };
+                readonly teamCount: { readonly column: 'teamCount' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };

@@ -15,6 +15,14 @@ export interface TournamentFormatSuggestionResult {
     advancePerGroup: number;
     description: string;
 }
+export interface analyzedMatchResult {
+    teamAScore: number;
+    teamBScore: number;
+    teamAPlayers: string[];
+    teamBPlayers: string[];
+    mvpIngame?: string;
+    duration?: number;
+}
 
 export class AiService {
     static async suggestTournamentFormat(teamCount: number) {
@@ -113,13 +121,19 @@ Bạn BẮT BUỘC trả về kết quả bằng chuẩn JSON theo cấu trúc s
   "teamAScore": <number - Điểm số hoặc số round thắng của đội A>,
   "teamBScore": <number - Điểm số hoặc số round thắng của đội B>,
   "teamAPlayers": [<string array - Danh sách tên ingame (IGN) của người chơi team A>],
-  "teamBPlayers": [<string array - Danh sách tên ingame (IGN) của người chơi team B>]
+  "teamBPlayers": [<string array - Danh sách tên ingame (IGN) của người chơi team B>],
+  "mvpIngame": <string - ingame của MVP trận đấu>,
+  "duration": <number - Thời gian diễn ra trận đấu bằng giây>
 }`;
-            const finalPrompt = `Bạn là trọng tài eSports cấp cao.\n${gameConfig.aiPrompt}\n${jsonSchemaPrompt}`;
+            const finalPrompt = `\n${gameConfig.aiPrompt}\n${jsonSchemaPrompt}`;
 
             const response = await groq.chat.completions.create({
                 model: GROQ_MODEL,
                 messages: [
+                    {
+                        role: "system",
+                        content: "Bạn là trọng tài eSports cấp cao.",
+                    },
                     {
                         role: "user",
                         content: [
@@ -140,12 +154,7 @@ Bạn BẮT BUỘC trả về kết quả bằng chuẩn JSON theo cấu trúc s
             const content = response.choices[0]?.message?.content;
             if (!content) throw new Error("API không trả về nội dung");
 
-            return JSON.parse(content) as {
-                teamAScore: number;
-                teamBScore: number;
-                teamAPlayers: string[];
-                teamBPlayers: string[];
-            };
+            return JSON.parse(content) as analyzedMatchResult;
         } catch (error) {
             console.error("Lỗi AI Service (Analyze Image):", error);
             return null;

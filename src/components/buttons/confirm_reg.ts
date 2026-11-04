@@ -71,16 +71,13 @@ export default button(
 
                 newTeamId = newTeam.id;
 
-                const playersToInsert = data.playersData.map((p: any) => ({
+                const playersToCreate = data.playersData.map((p: any) => ({
                     discordId: p.discordId,
                     ign: p.ign,
                     teamId: newTeam.id,
                 }));
 
-                const plan = tx.sql.public.player
-                    .insert(playersToInsert)
-                    .build();
-                await tx.execute(plan);
+                await tx.orm.public.Player.createAll(playersToCreate);
             });
 
             await ResponseHelper.sendSuccess(

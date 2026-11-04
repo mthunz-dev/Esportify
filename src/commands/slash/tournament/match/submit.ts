@@ -1,4 +1,5 @@
 import MessageBuilder from "@/helpers/message-builder";
+import { ResponseHelper } from "@/helpers/response";
 import { subsl } from "@/layouts/command";
 import { getGameConfig } from "@/modules/games";
 import { AiService } from "@/services/ai.service";
@@ -18,6 +19,7 @@ export default subsl(
                 .setDescriptionLocalizations({
                     vi: "Ảnh chụp màn hình kết quả trận đấu",
                 })
+                .setFileTypes("image")
                 .setRequired(true),
         ),
     {
@@ -26,30 +28,29 @@ export default subsl(
         ignore: true,
     },
     async (client, interaction) => {
-        const { db } = client;
+        await ResponseHelper.defer(interaction);
 
-        await interaction.deferReply();
-        await interaction.editReply(
-            "⏳ Trọng tài AI đang quét ảnh và tìm kiếm Ingame tuyển thủ...",
+        const { db } = client;
+        const { guildId } = interaction;
+
+        await interaction.reply(
+            new MessageBuilder()
+                .setColor("Orange")
+                .setDescription("⏳ Đang phân tích dữ liệu của trận đấu...")
+                .build(),
         );
 
         const attachment = interaction.options.getAttachment("image", true);
 
-        if (!attachment.contentType?.startsWith("image/"))
-            return interaction.editReply(
-                "❌ Vui lòng đính kèm một file hình ảnh hợp lệ (PNG, JPG)",
-            );
-
-        const activeTournament = await db.orm.public.Tournament.first({
-            guildId: interaction.guildId,
+        const activeTournament = await client.db.orm.public.Tournament.first({
+            guildId,
             status: "ACTIVE",
         });
-
-        if (!activeTournament) {
-            return interaction.editReply(
-                "❌ Không có giải đấu nào đang diễn ra. Hãy yêu cầu BTC chạy lệnh `/tournament create`.",
+        if (!activeTournament)
+            return await ResponseHelper.sendError(
+                `Chưa có giải đấu nào diễn ra trong máy chủ này!`,
+                { interaction },
             );
-        }
 
         const gameConfig = getGameConfig(activeTournament.game);
 
@@ -63,7 +64,7 @@ export default subsl(
 
         const matchData = await AiService.analyzeMatchImage(
             attachment.url,
-            attachment.contentType,
+            attachment.contentType!,
             gameConfig,
         );
 

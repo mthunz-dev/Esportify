@@ -120,7 +120,7 @@ export default subsl(
                         const groupCount = parseInt(parts[1]);
                         const advancePerGroup = parseInt(parts[2]);
 
-                        const teamPerGroup = teamCount
+                        const teamsPerGroup = teamCount
                             ? teamCount / groupCount
                             : 0;
 
@@ -136,7 +136,7 @@ export default subsl(
 
                             if (formatType === TournamentFormat.GroupStage) {
                                 formatText.push(
-                                    `ㅤㅤ • **\`Cấu trúc bảng đấu\`**: ${groupCount} Bảng x ${teamPerGroup} Đội`,
+                                    `ㅤㅤ • **\`Cấu trúc bảng đấu\`**: ${groupCount} Bảng x ${teamsPerGroup} Đội`,
                                     `ㅤㅤ •  **\`Vòng loại\`**: Lấy **Top ${advancePerGroup}** của các bảng đấu`,
                                 );
                             }
