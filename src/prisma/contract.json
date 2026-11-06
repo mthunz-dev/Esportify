@@ -562,6 +562,13 @@
                   "kind": "scalar"
                 }
               },
+              "tournamentId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "updatedAt": {
                 "nullable": false,
                 "type": {
@@ -601,6 +608,22 @@
                   "model": "Team",
                   "namespace": "public"
                 }
+              },
+              "tournament": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tournamentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tournament",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -622,6 +645,9 @@
                 },
                 "teamId": {
                   "column": "teamId"
+                },
+                "tournamentId": {
+                  "column": "tournamentId"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -675,7 +701,7 @@
                   "kind": "scalar"
                 }
               },
-              "screenshoot": {
+              "screenshotUrl": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
@@ -704,7 +730,7 @@
                 }
               },
               "winnerId": {
-                "nullable": true,
+                "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -746,7 +772,7 @@
               },
               "winner": {
                 "cardinality": "N:1",
-                "nullable": true,
+                "nullable": false,
                 "on": {
                   "localFields": [
                     "winnerId"
@@ -781,8 +807,8 @@
                 "roundIndex": {
                   "column": "roundIndex"
                 },
-                "screenshoot": {
-                  "column": "screenshoot"
+                "screenshotUrl": {
+                  "column": "screenshotUrl"
                 },
                 "teamAPoint": {
                   "column": "teamAPoint"
@@ -1142,6 +1168,21 @@
                 },
                 "to": {
                   "model": "Match",
+                  "namespace": "public"
+                }
+              },
+              "players": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tournamentId"
+                  ]
+                },
+                "to": {
+                  "model": "Player",
                   "namespace": "public"
                 }
               },
@@ -1584,6 +1625,11 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "tournamentId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
@@ -1591,6 +1637,26 @@
                 }
               },
               "foreignKeys": [
+                {
+                  "index": {
+                    "name": "player_tournamentId_idx_d0bd97a6"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tournamentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "player"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tournament"
+                  }
+                },
                 {
                   "index": {
                     "name": "player_teamId_idx_f2b72ab3"
@@ -1627,6 +1693,14 @@
                   ],
                   "name": "player_teamId_idx_f2b72ab3",
                   "prefix": "player_teamId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "tournamentId"
+                  ],
+                  "name": "player_tournamentId_idx_d0bd97a6",
+                  "prefix": "player_tournamentId_idx",
                   "unique": false
                 }
               ],
@@ -1669,7 +1743,7 @@
                   "dataType": "pg/int4",
                   "nullable": false
                 },
-                "screenshoot": {
+                "screenshotUrl": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
@@ -1692,7 +1766,7 @@
                 "winnerId": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": true
+                  "nullable": false
                 }
               },
               "foreignKeys": [
@@ -2097,7 +2171,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "32cd357928c107c2506e15f724e78ca98104a447d2b47e1f19a882041aa109c1"
+    "storageHash": "d68a1f129e2a09a119c1e1def10eb32d76eb2b82b0c31acde71ca7576acaafb9"
   },
   "execution": {
     "executionHash": "2d366329b0ed42116024061597c7c35110e21bf9f4f1df094c3c5aad964fe398",

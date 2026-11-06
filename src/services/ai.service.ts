@@ -16,12 +16,16 @@ export interface TournamentFormatSuggestionResult {
     description: string;
 }
 export interface analyzedMatchResult {
-    teamAScore: number;
-    teamBScore: number;
-    teamAPlayers: string[];
-    teamBPlayers: string[];
-    mvpIngame?: string;
-    duration?: number;
+    winner: {
+        score: number;
+        igns: string[];
+    };
+    loser: {
+        score: number;
+        igns: string[];
+    };
+    mvp: string;
+    duration: string | null;
 }
 
 export class AiService {
@@ -106,26 +110,15 @@ RÀNG BUỘC TỐI THƯỢNG:
 
     static async analyzeMatchImage(
         imageUrl: string,
-        mimeType: string,
         gameConfig: GameConfig,
+        ingames?: string[],
     ) {
         try {
-            const imageResponse = await fetch(imageUrl);
-            const arrayBuffer = await imageResponse.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
-            const base64Image = buffer.toString("base64");
-
-            const jsonSchemaPrompt = `
-Bạn BẮT BUỘC trả về kết quả bằng chuẩn JSON theo cấu trúc sau và không giải thích gì thêm:
-{
-  "teamAScore": <number - Điểm số hoặc số round thắng của đội A>,
-  "teamBScore": <number - Điểm số hoặc số round thắng của đội B>,
-  "teamAPlayers": [<string array - Danh sách tên ingame (IGN) của người chơi team A>],
-  "teamBPlayers": [<string array - Danh sách tên ingame (IGN) của người chơi team B>],
-  "mvpIngame": <string - ingame của MVP trận đấu>,
-  "duration": <number - Thời gian diễn ra trận đấu bằng giây>
-}`;
-            const finalPrompt = `\n${gameConfig.aiPrompt}\n${jsonSchemaPrompt}`;
+            const finalPrompt =
+                `${gameConfig.aiPrompt}` +
+                (ingames?.length
+                    ? `\nCHÚ Ý: Để nhận diện tên chính xác nhất, đây là danh sách ingame hợp lệ: [${ingames.join(", ")}]`
+                    : "");
 
             const response = await groq.chat.completions.create({
                 model: GROQ_MODEL,
@@ -141,7 +134,7 @@ Bạn BẮT BUỘC trả về kết quả bằng chuẩn JSON theo cấu trúc s
                             {
                                 type: "image_url",
                                 image_url: {
-                                    url: `data:${mimeType};base64,${base64Image}`,
+                                    url: imageUrl,
                                 },
                             },
                         ],

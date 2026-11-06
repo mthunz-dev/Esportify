@@ -5,33 +5,6 @@ import { EmbedHelper } from "@/helpers/embed";
 import MessageBuilder from "@/helpers/message-builder";
 import { TeamService } from "@/services/team.service";
 
-const ADJECTIVES = [
-    "Apex",
-    "Cyber",
-    "Phantom",
-    "Vortex",
-    "Crimson",
-    "Shadow",
-    "Omega",
-    "Immortal",
-];
-const NOUNS = [
-    "Dragons",
-    "Knights",
-    "Titans",
-    "Ninjas",
-    "Spirits",
-    "Vipers",
-    "Phoenix",
-    "Lords",
-];
-
-function generateTeamName(index: number): string {
-    const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
-    const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
-    return `${adj} ${noun} #${index + 1}`;
-}
-
 export default subsl(
     new SlashCommandSubcommandBuilder()
         .setName("mock")
@@ -90,7 +63,7 @@ export default subsl(
 
         const targetTeamCount = countInput || activeTournament.teamCount;
 
-        const createdTeamCount = TeamService.createMockTeam(
+        const createdTeamCount = await TeamService.createMockTeam(
             activeTournament.id,
             targetTeamCount,
             rosterSize,

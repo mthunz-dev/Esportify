@@ -26,6 +26,11 @@ export class EmbedHelper {
             .setColor(this.COLORS.INFO)
             .setDescription(`ℹ️ ${description}`);
     }
+    static loading(description: string): EmbedBuilder {
+        return new EmbedBuilder()
+            .setColor("Orange")
+            .setDescription(`⌛ ${description}`);
+    }
 
     static warning(description: string): EmbedBuilder {
         return new EmbedBuilder()

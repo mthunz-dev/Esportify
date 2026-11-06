@@ -7,6 +7,7 @@ import {
     type TextBasedChannel,
     type Interaction,
     ActionRowBuilder,
+    InteractionCollector,
 } from "discord.js";
 import { EmbedHelper } from "./embed.ts";
 import MessageBuilder, { type MessageOptions } from "./message-builder.ts";
@@ -22,18 +23,20 @@ type AnyInteraction =
 export interface ComponentOptions {
     allowedUsers: string[];
     time?: number;
+    once?: boolean;
     onCollect?: (
         interaction: MessageComponentInteraction,
+        collector: InteractionCollector<any>,
     ) => Promise<any> | any;
 
     additionArgs?: any[];
-
     onEnd?: (reason: string) => Promise<void> | void;
 }
 
 interface SendOptions {
     channel?: TextBasedChannel;
     replyTo?: Message;
+    followUp?: boolean;
     interaction?: AnyInteraction;
     components?: ComponentOptions;
     deleteAfter?: number;
@@ -83,6 +86,7 @@ export class ResponseHelper {
             interaction,
             deleteAfter,
             ephemeral,
+            followUp,
             components,
         } = options;
 
@@ -104,9 +108,14 @@ export class ResponseHelper {
 
         if (interaction) {
             if (interaction.replied || interaction.deferred) {
-                sentMessage = (await interaction.followUp(
-                    messageOptions,
-                )) as Message;
+                if (followUp)
+                    sentMessage = (await interaction.followUp(
+                        messageOptions,
+                    )) as Message;
+                else
+                    sentMessage = (await interaction.editReply(
+                        messageOptions,
+                    )) as Message;
             } else {
                 const response = await interaction.reply({
                     ...messageOptions,
@@ -127,45 +136,7 @@ export class ResponseHelper {
             throw new Error("[ResponseHelper] Unable to send message");
 
         if (components) {
-            const filter = async (interaction: Interaction) => {
-                if (!components.allowedUsers.includes(interaction.user.id)) {
-                    if (!(interaction instanceof CommandInteraction)) {
-                        await this.defer(interaction as AnyInteraction, true);
-
-                        await this.send(
-                            EmbedHelper.error(
-                                "Bạn không có quyền dùng tương tác này !",
-                            ),
-                            { interaction: interaction as AnyInteraction },
-                        );
-                    }
-
-                    return false;
-                } else return true;
-            };
-
-            const collector = sentMessage.createMessageComponentCollector({
-                filter,
-                time: components.time || ms("2m"),
-            });
-
-            collector.on("collect", async (interaction) => {
-                if (components.onCollect) {
-                    await components.onCollect(interaction);
-                } else if (interaction.inCachedGuild())
-                    await this.handleRoutedComponent(
-                        interaction,
-                        components.additionArgs,
-                    );
-            });
-
-            collector.on("end", async (_, reason) => {
-                if (components.onEnd) {
-                    await components.onEnd(reason);
-                }
-
-                await this.disableComponent(sentMessage);
-            });
+            this.collectComponents(sentMessage, components);
         }
 
         if (deleteAfter) {
@@ -175,6 +146,58 @@ export class ResponseHelper {
         }
 
         return sentMessage;
+    }
+    static collectComponents(
+        targetMessage: Message,
+        options: ComponentOptions,
+    ) {
+        const filter = async (interaction: Interaction) => {
+            if (!options.allowedUsers.includes(interaction.user.id)) {
+                if (!(interaction instanceof CommandInteraction)) {
+                    await this.defer(interaction as AnyInteraction, true);
+                    await this.sendError(
+                        "Bạn không có quyền dùng tương tác này!",
+                        {
+                            interaction: interaction as AnyInteraction,
+                        },
+                    );
+                }
+                return false;
+            }
+            return true;
+        };
+
+        const collector = targetMessage.createMessageComponentCollector({
+            filter,
+            time: options.time || ms("2m"),
+        });
+
+        collector[options.once ? "once" : "on"](
+            "collect",
+            async (interaction) => {
+                try {
+                    if (options.onCollect) {
+                        await options.onCollect(interaction, collector);
+                    } else if (interaction.inCachedGuild()) {
+                        await this.handleRoutedComponent(
+                            interaction,
+                            options.additionArgs,
+                        );
+                    }
+                } catch (error) {
+                    console.error("[Collector Error]:", error);
+                }
+            },
+        );
+
+        collector.on("end", async (_, reason) => {
+            if (options.onEnd) {
+                await options.onEnd(reason);
+            }
+            await this.disableComponent(targetMessage);
+        });
+
+        return collector;
     }
 
     private static async handleRoutedComponent(

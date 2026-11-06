@@ -23,6 +23,7 @@
         "@google/genai": "^2.30.0",
         "@prisma/client": "latest",
         "@prisma/orm-postgres": "^8.0.0-rc.18",
+        "canvas": "^3.2.3",
         "chalk": "^5.6.2",
         "date-fns": "^4.4.0",
         "discord.js": "^14.28.0",

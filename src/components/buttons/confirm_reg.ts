@@ -72,6 +72,7 @@ export default button(
                 newTeamId = newTeam.id;
 
                 const playersToCreate = data.playersData.map((p: any) => ({
+                    tournamentId: data.tournamentId,
                     discordId: p.discordId,
                     ign: p.ign,
                     teamId: newTeam.id,

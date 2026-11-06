@@ -4,12 +4,10 @@ import { ResponseHelper } from "@/helpers/response";
 import { subsl } from "@/layouts/command";
 import { TournamentService } from "@/services/tournament.service";
 import { SlashCommandSubcommandBuilder } from "discord.js";
-import _ from "lodash";
-
 export default subsl(
     new SlashCommandSubcommandBuilder()
         .setName("draw")
-        .setDescription("Draw ")
+        .setDescription("Draw matches")
         .setDescriptionLocalizations({
             vi: "Sắp xếp ngẫu nhiên các đội vào trận đấu",
         })

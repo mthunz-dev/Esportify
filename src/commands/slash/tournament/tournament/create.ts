@@ -296,6 +296,7 @@ export default subsl(
                 {
                     type: 3,
                     customId: `select_tournament_format`,
+                    placeholder: "Lựa chọn cách thức tổ chức giải đấu",
                     options: suggestionsOptions,
                 },
             ]);

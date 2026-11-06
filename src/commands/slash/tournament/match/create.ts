@@ -77,7 +77,9 @@ export default subsl(
             tournamentId: teamA.tournamentId,
             teamAId: teamA.id,
             teamBId: teamB.id,
-            roundCount,
+            bestOf: roundCount,
+            name: `${teamA.name}:${teamB.name}`,
+            type: "FINAL",
         });
 
         await ResponseHelper.send(

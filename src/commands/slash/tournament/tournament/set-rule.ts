@@ -1,6 +1,6 @@
 import { FileHelper } from "@/helpers/file";
 import { subsl } from "@/layouts/command";
-import { SlashCommandSubcommandBuilder } from "discord.js";
+import { hyperlink, SlashCommandSubcommandBuilder } from "discord.js";
 
 export default subsl(
     new SlashCommandSubcommandBuilder()
@@ -9,10 +9,20 @@ export default subsl(
         .setDescriptionLocalizations({ vi: "Thiết lập thể lệ cho giải đấu" })
         .addAttachmentOption((o) =>
             o
-                .setName("rule_file")
+                .setName("rule-file")
                 .setDescription("Rule of the tournament (.txt format)")
+                .setFileTypes(".txt")
                 .setDescriptionLocalizations({
                     vi: "Thể lệ của giải đấu (định dạng file .txt)",
+                })
+                .setRequired(true),
+        )
+        .addStringOption((o) =>
+            o
+                .setName("rule-url")
+                .setDescription("URL to tournment's rules")
+                .setDescriptionLocalizations({
+                    vi: "Đường link tới file thể lệ",
                 })
                 .setRequired(true),
         ),
@@ -36,16 +46,8 @@ export default subsl(
             );
         }
 
-        const attachment = interaction.options.getAttachment("rule_file", true);
-
-        if (
-            !attachment.name.endsWith(".txt") &&
-            !attachment.contentType?.includes("text/plain")
-        ) {
-            return interaction.editReply(
-                "❌ Hệ thống AI chỉ hỗ trợ đọc file văn bản thuần túy (`.txt`) để đảm bảo độ chính xác!",
-            );
-        }
+        const attachment = interaction.options.getAttachment("rule-file", true);
+        const ruleUrl = interaction.options.getString("rule-url", true);
 
         const rulesText = await FileHelper.readTextFromUrl(attachment.url);
 
@@ -59,10 +61,11 @@ export default subsl(
             id: activeTournament.id,
         }).update({
             rules: rulesText,
+            rulesURL: ruleUrl,
         });
 
         await interaction.editReply(
-            `✅ Cập nhật thành công! Trợ lý AI đã ghi nhớ toàn bộ thể lệ mới của giải **${activeTournament.name}**.`,
+            `✅ Cập nhật thành công! Trợ lý AI đã ghi nhớ toàn bộ thể lệ mới của giải **${activeTournament.name}** và đường link truy cập: ${hyperlink("THỂ LỆ", ruleUrl)}.`,
         );
     },
 );

@@ -37,7 +37,7 @@ export default slash(
             );
 
         const whereIsUsername = new AttachmentBuilder(
-            path.join(__dirname, "../../../images/discord_username.png"),
+            path.join(__dirname, "../../../../assets/discord_username.png"),
         );
 
         const message = new MessageBuilder()

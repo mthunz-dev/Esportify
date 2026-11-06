@@ -37,6 +37,8 @@ export class TeamService {
         }
 
         return await db.transaction(async (tx) => {
+            let createdTeamCount = 0;
+
             for (let i = 0; i < teamCount; i++) {
                 const teamName = generateTeamName(i);
 
@@ -51,6 +53,7 @@ export class TeamService {
                 const playersData = Array.from(
                     { length: rosterSize },
                     (_, pIdx) => ({
+                        tournamentId,
                         teamId: team.id,
                         discordId: `MOCK_${timestamp}_${i + 1}_${pIdx + 1}`, // Discord ID ảo đánh dấu rõ ràng
                         ign: `Player_${i + 1}_${pIdx + 1}`,
@@ -58,12 +61,10 @@ export class TeamService {
                     }),
                 );
 
-                const created =
-                    await tx.orm.public.Player.createAll(playersData);
-                return created.length;
+                await tx.orm.public.Player.createAll(playersData);
+                createdTeamCount++;
             }
+            return createdTeamCount;
         });
     }
-
-    
 }

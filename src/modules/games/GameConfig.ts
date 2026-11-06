@@ -4,4 +4,5 @@ export interface GameConfig {
     minPlayers: number;
     maxPlayers: number;
     aiPrompt: string;
+    mock: { [key: string]: { max: number; min: number } };
 }
